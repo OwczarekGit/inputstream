@@ -3,7 +3,7 @@ use clap::Parser;
 pub use error::{Error, Result};
 use event_handlers::{
     channels::create_channels,
-    handler::{EventHandler, OsuEventHandler},
+    handler::{EventHandler, MouseEventHandler, OsuEventHandler},
 };
 use server::Server;
 
@@ -20,6 +20,7 @@ fn main() -> Result<()> {
     let (senders, osu_recv, keyboard_recv, mouse_recv) = create_channels();
 
     OsuEventHandler.run_detached(osu_recv);
+    MouseEventHandler.run_detached(mouse_recv);
 
     server.start(senders)?;
 

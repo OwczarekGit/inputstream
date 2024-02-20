@@ -4,7 +4,7 @@ use std::str::FromStr;
 pub enum InputEvent {
     Osu(OsuEvent),
     Keyboard,
-    Mouse,
+    Mouse(MouseEvent),
 }
 
 impl FromStr for InputEvent {
@@ -19,7 +19,17 @@ impl FromStr for InputEvent {
 
         match protocol {
             "KEYBOARD" => Ok(Self::Keyboard),
-            "MOUSE" => Ok(Self::Mouse),
+            "MOUSE" => {
+                let mut data = split.next().ok_or("Missing data.")?.split(';');
+                let dx = data.next().ok_or("Missing delta X.")?;
+                let dy = data.next().ok_or("Missing delta Y.")?;
+
+                Ok(Self::Mouse(MouseEvent {
+                    btn_left_state: true,
+                    btn_right_state: true,
+                    btn_middle_state: true,
+                }))
+            }
             "OSU" => {
                 let data = split.next().ok_or("Missing data.".to_string())?.trim();
                 let data = data
@@ -40,4 +50,11 @@ impl FromStr for InputEvent {
 pub struct OsuEvent {
     pub key1_state: bool,
     pub key2_state: bool,
+}
+
+#[derive(Debug, Clone)]
+pub struct MouseEvent {
+    pub btn_left_state: bool,
+    pub btn_right_state: bool,
+    pub btn_middle_state: bool,
 }

@@ -55,7 +55,9 @@ fn listen(mut stream: TcpStream, senders: Senders) -> Result<()> {
                         let _ = senders.osu_channel.send(event);
                     }
                     InputEvent::Keyboard => {}
-                    InputEvent::Mouse => {}
+                    InputEvent::Mouse(event) => {
+                        let _ = senders.mouse_channel.send(event);
+                    }
                 },
                 Err(err) => println!("{}", err),
             }

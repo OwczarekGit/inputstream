@@ -14,3 +14,5 @@ pub trait EventHandler<T: Send + 'static> {
 }
 
 pub struct OsuEventHandler;
+
+pub struct MouseEventHandler;
