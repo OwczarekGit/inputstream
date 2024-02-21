@@ -1,61 +1,81 @@
+use std::ops::Deref;
+
+#[derive(Debug, Clone)]
+pub struct OsuKey(String);
+
+impl Deref for OsuKey {
+    type Target = String;
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+
+impl From<String> for OsuKey {
+    fn from(value: String) -> Self {
+        Self(value)
+    }
+}
+
 #[cfg(target_os = "linux")]
-pub fn get_evdev_key(key_str: &str) -> Option<evdev::Key> {
-    use evdev::Key;
+impl TryFrom<OsuKey> for evdev::Key {
+    type Error = String;
+    fn try_from(value: OsuKey) -> Result<Self, Self::Error> {
+        use evdev::Key;
+        match value.0.as_str().trim().to_lowercase().as_str() {
+            // Row numbers
+            "1" => Ok(Key::KEY_1),
+            "2" => Ok(Key::KEY_2),
+            "3" => Ok(Key::KEY_3),
+            "4" => Ok(Key::KEY_4),
+            "5" => Ok(Key::KEY_5),
+            "6" => Ok(Key::KEY_6),
+            "7" => Ok(Key::KEY_7),
+            "8" => Ok(Key::KEY_8),
+            "9" => Ok(Key::KEY_9),
+            "0" => Ok(Key::KEY_0),
+            "-" | "minus" => Ok(Key::KEY_MINUS),
+            "=" | "equals" => Ok(Key::KEY_EQUAL),
 
-    match key_str.trim().to_lowercase().as_str() {
-        // Row numbers
-        "1" => Some(Key::KEY_1),
-        "2" => Some(Key::KEY_2),
-        "3" => Some(Key::KEY_3),
-        "4" => Some(Key::KEY_4),
-        "5" => Some(Key::KEY_5),
-        "6" => Some(Key::KEY_6),
-        "7" => Some(Key::KEY_7),
-        "8" => Some(Key::KEY_8),
-        "9" => Some(Key::KEY_9),
-        "0" => Some(Key::KEY_0),
-        "-" | "minus" => Some(Key::KEY_MINUS),
-        "=" | "equals" => Some(Key::KEY_EQUAL),
+            // Row 1
+            "q" => Ok(Key::KEY_Q),
+            "w" => Ok(Key::KEY_W),
+            "e" => Ok(Key::KEY_E),
+            "r" => Ok(Key::KEY_R),
+            "t" => Ok(Key::KEY_T),
+            "y" => Ok(Key::KEY_Y),
+            "u" => Ok(Key::KEY_U),
+            "i" => Ok(Key::KEY_I),
+            "o" => Ok(Key::KEY_O),
+            "p" => Ok(Key::KEY_P),
+            "[" => Ok(Key::KEY_LEFTBRACE),
+            "]" => Ok(Key::KEY_RIGHTBRACE),
 
-        // Row 1
-        "q" => Some(Key::KEY_Q),
-        "w" => Some(Key::KEY_W),
-        "e" => Some(Key::KEY_E),
-        "r" => Some(Key::KEY_R),
-        "t" => Some(Key::KEY_T),
-        "y" => Some(Key::KEY_Y),
-        "u" => Some(Key::KEY_U),
-        "i" => Some(Key::KEY_I),
-        "o" => Some(Key::KEY_O),
-        "p" => Some(Key::KEY_P),
-        "[" => Some(Key::KEY_LEFTBRACE),
-        "]" => Some(Key::KEY_RIGHTBRACE),
+            // Row 2
+            "a" => Ok(Key::KEY_A),
+            "s" => Ok(Key::KEY_S),
+            "d" => Ok(Key::KEY_D),
+            "f" => Ok(Key::KEY_F),
+            "g" => Ok(Key::KEY_G),
+            "h" => Ok(Key::KEY_H),
+            "j" => Ok(Key::KEY_J),
+            "k" => Ok(Key::KEY_K),
+            "l" => Ok(Key::KEY_L),
+            ";" | "semicol" => Ok(Key::KEY_SEMICOLON),
+            "'" => Ok(Key::KEY_APOSTROPHE),
+            "\\" | "backslash" => Ok(Key::KEY_BACKSLASH),
 
-        // Row 2
-        "a" => Some(Key::KEY_A),
-        "s" => Some(Key::KEY_S),
-        "d" => Some(Key::KEY_D),
-        "f" => Some(Key::KEY_F),
-        "g" => Some(Key::KEY_G),
-        "h" => Some(Key::KEY_H),
-        "j" => Some(Key::KEY_J),
-        "k" => Some(Key::KEY_K),
-        "l" => Some(Key::KEY_L),
-        ";" | "semicol" => Some(Key::KEY_SEMICOLON),
-        "'" => Some(Key::KEY_APOSTROPHE),
-        "\\" | "backslash" => Some(Key::KEY_BACKSLASH),
-
-        // Row 3
-        "z" => Some(Key::KEY_Z),
-        "x" => Some(Key::KEY_X),
-        "c" => Some(Key::KEY_C),
-        "v" => Some(Key::KEY_V),
-        "b" => Some(Key::KEY_B),
-        "n" => Some(Key::KEY_N),
-        "m" => Some(Key::KEY_M),
-        "," | "comma" => Some(Key::KEY_COMMA),
-        "." | "dot" => Some(Key::KEY_DOT),
-        "/" | "slash" => Some(Key::KEY_SLASH),
-        _ => None,
+            // Row 3
+            "z" => Ok(Key::KEY_Z),
+            "x" => Ok(Key::KEY_X),
+            "c" => Ok(Key::KEY_C),
+            "v" => Ok(Key::KEY_V),
+            "b" => Ok(Key::KEY_B),
+            "n" => Ok(Key::KEY_N),
+            "m" => Ok(Key::KEY_M),
+            "," | "comma" => Ok(Key::KEY_COMMA),
+            "." | "dot" => Ok(Key::KEY_DOT),
+            "/" | "slash" => Ok(Key::KEY_SLASH),
+            _ => Err("Unknown token".to_string()),
+        }
     }
 }

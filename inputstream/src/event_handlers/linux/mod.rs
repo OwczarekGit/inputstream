@@ -7,16 +7,19 @@ use evdev::{
 use lib_inputstream::{
     consts::{MOUSE_DEVICE_NAME, OSU_DEVICE_NAME},
     input_event::{MouseEvent, OsuEvent},
-    osu_key_args::get_evdev_key,
 };
 
 use super::handler::{EventHandler, MouseEventHandler, OsuEventHandler};
 
 impl EventHandler<OsuEvent> for OsuEventHandler {
     fn listen(&self, receiver: std::sync::mpsc::Receiver<OsuEvent>) -> Result<()> {
-        let config = config();
-        let k1 = get_evdev_key(&config.osu_key1).unwrap_or(Key::KEY_Z);
-        let k2 = get_evdev_key(&config.osu_key2).unwrap_or(Key::KEY_X);
+        let (k1, k2) = {
+            let config = config().clone();
+            (
+                Key::try_from(config.osu_key1).unwrap_or(Key::KEY_Z),
+                Key::try_from(config.osu_key2).unwrap_or(Key::KEY_X),
+            )
+        };
 
         let mut keys = AttributeSet::new();
         keys.insert(k1);
