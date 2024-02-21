@@ -1,21 +1,26 @@
 use std::vec;
 
-use crate::Result;
+use crate::{config::config, Result};
 use evdev::{
     uinput::VirtualDeviceBuilder, AttributeSet, EventType, InputEvent, Key, RelativeAxisType,
 };
 use lib_inputstream::{
     consts::{MOUSE_DEVICE_NAME, OSU_DEVICE_NAME},
     input_event::{MouseEvent, OsuEvent},
+    osu_key_args::get_evdev_key,
 };
 
 use super::handler::{EventHandler, MouseEventHandler, OsuEventHandler};
 
 impl EventHandler<OsuEvent> for OsuEventHandler {
     fn listen(&self, receiver: std::sync::mpsc::Receiver<OsuEvent>) -> Result<()> {
+        let config = config();
+        let k1 = get_evdev_key(&config.osu_key1).unwrap_or(Key::KEY_Z);
+        let k2 = get_evdev_key(&config.osu_key2).unwrap_or(Key::KEY_X);
+
         let mut keys = AttributeSet::new();
-        keys.insert(Key::KEY_Z);
-        keys.insert(Key::KEY_X);
+        keys.insert(k1);
+        keys.insert(k2);
 
         let mut device = VirtualDeviceBuilder::new()?
             .name(OSU_DEVICE_NAME)
@@ -32,14 +37,14 @@ impl EventHandler<OsuEvent> for OsuEventHandler {
                     if prev.key1_state != msg.key1_state {
                         ev.push(InputEvent::new(
                             EventType::KEY,
-                            Key::KEY_Z.code(),
+                            k1.code(),
                             msg.key1_state.into(),
                         ));
                     }
                 } else {
                     ev.push(InputEvent::new(
                         EventType::KEY,
-                        Key::KEY_Z.code(),
+                        k1.code(),
                         msg.key1_state.into(),
                     ));
                 }
@@ -48,14 +53,14 @@ impl EventHandler<OsuEvent> for OsuEventHandler {
                     if prev.key2_state != msg.key2_state {
                         ev.push(InputEvent::new(
                             EventType::KEY,
-                            Key::KEY_X.code(),
+                            k2.code(),
                             msg.key2_state.into(),
                         ));
                     }
                 } else {
                     ev.push(InputEvent::new(
                         EventType::KEY,
-                        Key::KEY_X.code(),
+                        k2.code(),
                         msg.key2_state.into(),
                     ));
                 }

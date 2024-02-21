@@ -172,6 +172,9 @@ dependencies = [
 [[package]]
 name = "lib-inputstream"
 version = "0.1.0"
+dependencies = [
+ "evdev",
+]
 
 [[package]]
 name = "libc"

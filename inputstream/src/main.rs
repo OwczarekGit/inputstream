@@ -1,5 +1,4 @@
-use clap::Parser;
-
+use config::config;
 pub use error::{Error, Result};
 use event_handlers::{
     channels::create_channels,
@@ -14,7 +13,7 @@ mod senders;
 mod server;
 
 fn main() -> Result<()> {
-    let config = config::Config::parse();
+    let config = config();
     let mut server = Server::new(config.port)?;
 
     let (senders, osu_recv, keyboard_recv, mouse_recv) = create_channels();
