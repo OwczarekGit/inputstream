@@ -22,22 +22,45 @@ impl EventHandler<OsuEvent> for OsuEventHandler {
             .with_keys(&keys)?
             .build()?;
 
+        let mut prev_state: Option<OsuEvent> = None;
+
         loop {
             if let Ok(msg) = receiver.recv() {
                 let mut ev = vec![];
 
-                ev.push(InputEvent::new(
-                    EventType::KEY,
-                    Key::KEY_Z.code(),
-                    msg.key1_state.into(),
-                ));
+                if let Some(prev) = &prev_state {
+                    if prev.key1_state != msg.key1_state {
+                        ev.push(InputEvent::new(
+                            EventType::KEY,
+                            Key::KEY_Z.code(),
+                            msg.key1_state.into(),
+                        ));
+                    }
+                } else {
+                    ev.push(InputEvent::new(
+                        EventType::KEY,
+                        Key::KEY_Z.code(),
+                        msg.key1_state.into(),
+                    ));
+                }
 
-                ev.push(InputEvent::new(
-                    EventType::KEY,
-                    Key::KEY_X.code(),
-                    msg.key2_state.into(),
-                ));
+                if let Some(prev) = &prev_state {
+                    if prev.key2_state != msg.key2_state {
+                        ev.push(InputEvent::new(
+                            EventType::KEY,
+                            Key::KEY_X.code(),
+                            msg.key2_state.into(),
+                        ));
+                    }
+                } else {
+                    ev.push(InputEvent::new(
+                        EventType::KEY,
+                        Key::KEY_X.code(),
+                        msg.key2_state.into(),
+                    ));
+                }
 
+                prev_state = Some(msg);
                 let _ = device.emit(&ev);
             }
         }
