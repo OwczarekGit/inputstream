@@ -27,19 +27,17 @@ impl Server {
 
     pub fn start(&mut self, senders: Senders) -> Result<()> {
         println!("Starting the server on port: {}", self.port);
-        for stream in self.listener.incoming() {
-            if let Ok(stream) = stream {
-                println!("New connection from: {}", stream.peer_addr()?);
-                let senders = senders.clone();
-                thread::spawn(move || listen(stream, senders));
-            }
+        for stream in self.listener.incoming().flatten() {
+            println!("New connection from: {}", stream.peer_addr()?);
+            let senders = senders.clone();
+            thread::spawn(move || listen(stream, senders));
         }
 
         Ok(())
     }
 }
 
-fn listen(mut stream: TcpStream, senders: Senders) -> Result<()> {
+fn listen(stream: TcpStream, senders: Senders) -> Result<()> {
     let addr = stream.peer_addr()?;
     let mut reader = BufReader::new(&stream);
     'conn: loop {

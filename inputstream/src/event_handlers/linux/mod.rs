@@ -66,7 +66,47 @@ impl EventHandler<MouseEvent> for MouseEventHandler {
             if let Ok(event) = receiver.recv() {
                 let mut ev = vec![];
 
-                ev.push(InputEvent::new(EventType::KEY, Key::BTN_LEFT.code(), 1));
+                if event.dx.abs() > 0f32 {
+                    ev.push(InputEvent::new(
+                        EventType::RELATIVE,
+                        RelativeAxisType::REL_X.0,
+                        event.dx as i32,
+                    ));
+                }
+
+                if event.dy.abs() > 0f32 {
+                    ev.push(InputEvent::new(
+                        EventType::RELATIVE,
+                        RelativeAxisType::REL_Y.0,
+                        -event.dy as i32,
+                    ));
+                }
+
+                if event.dw.abs() > 0f32 {
+                    ev.push(InputEvent::new(
+                        EventType::RELATIVE,
+                        RelativeAxisType::REL_WHEEL.0,
+                        event.dw as i32,
+                    ));
+                }
+
+                ev.push(InputEvent::new(
+                    EventType::KEY,
+                    Key::BTN_LEFT.code(),
+                    event.btn_left_state.into(),
+                ));
+
+                ev.push(InputEvent::new(
+                    EventType::KEY,
+                    Key::BTN_RIGHT.code(),
+                    event.btn_right_state.into(),
+                ));
+
+                ev.push(InputEvent::new(
+                    EventType::KEY,
+                    Key::BTN_MIDDLE.code(),
+                    event.btn_middle_state.into(),
+                ));
 
                 let _ = device.emit(&ev);
             }

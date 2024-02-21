@@ -21,13 +21,42 @@ impl FromStr for InputEvent {
             "KEYBOARD" => Ok(Self::Keyboard),
             "MOUSE" => {
                 let mut data = split.next().ok_or("Missing data.")?.split(';');
-                let dx = data.next().ok_or("Missing delta X.")?;
-                let dy = data.next().ok_or("Missing delta Y.")?;
+
+                let dx = data
+                    .next()
+                    .ok_or("Missing delta X.")?
+                    .trim()
+                    .parse::<f32>()
+                    .unwrap_or(0.0);
+
+                let dy = data
+                    .next()
+                    .ok_or("Missing delta Y.")?
+                    .trim()
+                    .parse::<f32>()
+                    .unwrap_or(0.0);
+
+                let dw = data
+                    .next()
+                    .ok_or("Missing delta mouse wheel.")?
+                    .trim()
+                    .parse::<f32>()
+                    .unwrap_or(0.0);
+
+                let buttons = data
+                    .next()
+                    .ok_or("Missing button state.")?
+                    .trim()
+                    .parse::<u32>()
+                    .unwrap_or(0);
 
                 Ok(Self::Mouse(MouseEvent {
-                    btn_left_state: true,
-                    btn_right_state: true,
-                    btn_middle_state: true,
+                    dx,
+                    dy,
+                    dw,
+                    btn_left_state: buttons & 0x01 > 0,
+                    btn_right_state: buttons & 0x02 > 0,
+                    btn_middle_state: buttons & 0x04 > 0,
                 }))
             }
             "OSU" => {
@@ -37,8 +66,8 @@ impl FromStr for InputEvent {
                     .map_err(|_| "Invalid data.".to_string())?;
 
                 Ok(Self::Osu(OsuEvent {
-                    key1_state: data & 0b0000_0001 > 0,
-                    key2_state: data & 0b0000_0010 > 0,
+                    key1_state: data & 0x01 > 0,
+                    key2_state: data & 0x02 > 0,
                 }))
             }
             unknown => Err(format!("Unknown protocol: {unknown}")),
@@ -54,6 +83,9 @@ pub struct OsuEvent {
 
 #[derive(Debug, Clone)]
 pub struct MouseEvent {
+    pub dx: f32,
+    pub dy: f32,
+    pub dw: f32,
     pub btn_left_state: bool,
     pub btn_right_state: bool,
     pub btn_middle_state: bool,
