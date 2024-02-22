@@ -12,6 +12,10 @@ pub fn main() {
     let mut socket = TcpStream::connect(format!("{}:{}", config.address, config.port));
 
     let sdl_context = sdl2::init().unwrap();
+
+    sdl_context.mouse().set_relative_mouse_mode(true);
+    sdl_context.mouse().show_cursor(true);
+
     let video_subsystem = sdl_context.video().unwrap();
 
     let window = video_subsystem
