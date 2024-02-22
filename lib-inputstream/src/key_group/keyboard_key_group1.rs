@@ -115,7 +115,7 @@ impl From<KeyboardKeyGroup1> for Vec<(evdev::Key, bool)> {
                 23 => (Key::KEY_X, k.pressed()),
                 24 => (Key::KEY_Y, k.pressed()),
                 25 => (Key::KEY_Z, k.pressed()),
-                _ => panic!("INVALID KEY"),
+                _ => (Key::KEY_A, false),
             })
             .collect::<Vec<_>>()
     }

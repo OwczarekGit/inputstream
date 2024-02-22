@@ -50,6 +50,7 @@ impl EventHandler<KeyboardEvent> for KeyboardEventHandler {
                 let mut events = vec![];
                 group1.check_states(msg.key_group1);
                 for (key, pressed) in Vec::<(Key, bool)>::from(group1.clone()) {
+                    dbg!(&key, pressed);
                     events.push(InputEvent::new(EventType::KEY, key.code(), pressed.into()));
                 }
                 let _ = device.emit(&events);

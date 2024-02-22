@@ -30,6 +30,7 @@ pub fn main() {
 
     let mut event_pump = sdl_context.event_pump().unwrap();
     'running: loop {
+        let mut new_button_group1 = 0u32;
         for event in event_pump.poll_iter() {
             match event {
                 Event::Quit { .. } => break 'running,
@@ -67,7 +68,7 @@ pub fn main() {
                         _ => 0,
                     };
 
-                    button_group1 &= !(1 << bit);
+                    new_button_group1 &= !(1 << bit);
                 }
                 Event::KeyDown {
                     keycode: Some(keycode),
@@ -102,7 +103,7 @@ pub fn main() {
                         Keycode::Z => 25,
                         _ => 0,
                     };
-                    button_group1 |= 1 << bit;
+                    new_button_group1 |= 1 << bit;
                 }
                 _ => {}
             };
@@ -125,12 +126,15 @@ pub fn main() {
         }
 
         if let Ok(socket) = &mut socket {
-            let _ = socket
-                .write(format!("{KEYBOARD_PROTOCOL_NAME}|{button_group1};0;0;0\n").as_bytes());
+            if new_button_group1 != button_group1 {
+                let _ = socket
+                    .write(format!("{KEYBOARD_PROTOCOL_NAME}|{button_group1};0;0;0\n").as_bytes());
+            }
 
-            let _ =
-                socket.write(format!("{MOUSE_PROTOCOL_NAME}|{dx};{dy};0;{m_buttons}\n").as_bytes());
+            //let _ =
+            //  socket.write(format!("{MOUSE_PROTOCOL_NAME}|{dx};{dy};0;{m_buttons}\n").as_bytes());
         }
+        button_group1 = new_button_group1;
         ::std::thread::sleep(Duration::new(0, 1_000_000_000u32 / 60));
     }
 }
