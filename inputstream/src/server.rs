@@ -52,7 +52,9 @@ fn listen(stream: TcpStream, senders: Senders) -> Result<()> {
                     InputEvent::Osu(event) => {
                         let _ = senders.osu_channel.send(event);
                     }
-                    InputEvent::Keyboard => {}
+                    InputEvent::Keyboard(event) => {
+                        let _ = senders.keyboard_channel.send(event);
+                    }
                     InputEvent::Mouse(event) => {
                         let _ = senders.mouse_channel.send(event);
                     }

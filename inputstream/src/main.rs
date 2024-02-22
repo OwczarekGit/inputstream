@@ -2,7 +2,7 @@ use config::config;
 pub use error::{Error, Result};
 use event_handlers::{
     channels::create_channels,
-    handler::{EventHandler, MouseEventHandler, OsuEventHandler},
+    handler::{EventHandler, KeyboardEventHandler, MouseEventHandler, OsuEventHandler},
 };
 use server::Server;
 
@@ -20,6 +20,7 @@ fn main() -> Result<()> {
 
     OsuEventHandler.run_detached(osu_recv);
     MouseEventHandler.run_detached(mouse_recv);
+    KeyboardEventHandler.run_detached(keyboard_recv);
 
     server.start(senders)?;
 

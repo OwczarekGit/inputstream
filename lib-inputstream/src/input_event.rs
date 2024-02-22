@@ -3,7 +3,7 @@ use std::str::FromStr;
 #[derive(Debug, Clone)]
 pub enum InputEvent {
     Osu(OsuEvent),
-    Keyboard,
+    Keyboard(KeyboardEvent),
     Mouse(MouseEvent),
 }
 
@@ -18,7 +18,17 @@ impl FromStr for InputEvent {
             .trim();
 
         match protocol {
-            "KEYBOARD" => Ok(Self::Keyboard),
+            "KEYBOARD" => {
+                let mut data = split.next().ok_or("Missing data.")?.split(';');
+                let key_group1 = data
+                    .next()
+                    .ok_or("Missing keyboard group1.")?
+                    .trim()
+                    .parse::<u32>()
+                    .unwrap_or(0);
+
+                Ok(Self::Keyboard(KeyboardEvent { key_group1 }))
+            }
             "MOUSE" => {
                 let mut data = split.next().ok_or("Missing data.")?.split(';');
 
@@ -89,4 +99,9 @@ pub struct MouseEvent {
     pub btn_left_state: bool,
     pub btn_right_state: bool,
     pub btn_middle_state: bool,
+}
+
+#[derive(Debug, Clone)]
+pub struct KeyboardEvent {
+    pub key_group1: u32,
 }

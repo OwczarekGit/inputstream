@@ -1,6 +1,6 @@
 use std::sync::mpsc::{channel, Receiver, Sender};
 
-use lib_inputstream::input_event::{MouseEvent, OsuEvent};
+use lib_inputstream::input_event::{KeyboardEvent, MouseEvent, OsuEvent};
 
 use crate::senders::Senders;
 
@@ -11,11 +11,11 @@ fn create_channel<T>() -> (Sender<T>, Receiver<T>) {
 pub fn create_channels() -> (
     Senders,
     Receiver<OsuEvent>,
-    Receiver<String>,
+    Receiver<KeyboardEvent>,
     Receiver<MouseEvent>,
 ) {
     let osu_channel = create_channel::<OsuEvent>();
-    let keyboard_channel = create_channel::<String>();
+    let keyboard_channel = create_channel::<KeyboardEvent>();
     let mouse_channel = create_channel::<MouseEvent>();
 
     (
