@@ -4,7 +4,7 @@ mod config;
 use clap::Parser;
 use config::Config;
 use lib_inputstream::consts::{KEYBOARD_PROTOCOL_NAME, MOUSE_PROTOCOL_NAME};
-use sdl2::{event::Event, keyboard::Keycode, pixels::Color};
+use sdl2::{event::Event, keyboard::Keycode, mouse::MouseButton, pixels::Color};
 
 pub fn main() {
     let config = Config::parse();
@@ -117,26 +117,26 @@ pub fn main() {
                 _ => {}
             };
         }
-        let mouse_state = event_pump.relative_mouse_state();
+        let mouse_state: sdl2::mouse::RelativeMouseState = event_pump.relative_mouse_state();
         let dx = mouse_state.x() as f32 * config.mouse_accel;
         let dy = mouse_state.y() as f32 * config.mouse_accel;
 
-        if mouse_state.left() {
+        if mouse_state.is_mouse_button_pressed(MouseButton::Left) {
             m_buttons |= 0x01;
         } else {
-            m_buttons &= 0x01;
+            m_buttons &= !0x01;
         }
 
-        if mouse_state.right() {
+        if mouse_state.is_mouse_button_pressed(MouseButton::Right) {
             m_buttons |= 0x02;
         } else {
-            m_buttons &= 0x02;
+            m_buttons &= !0x02;
         }
 
-        if mouse_state.middle() {
+        if mouse_state.is_mouse_button_pressed(MouseButton::Middle) {
             m_buttons |= 0x04;
         } else {
-            m_buttons &= 0x04;
+            m_buttons &= !0x04;
         }
 
         if let Ok(socket) = &mut socket {
