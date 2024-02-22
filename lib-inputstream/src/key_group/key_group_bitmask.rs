@@ -7,6 +7,7 @@ impl KeyGroupBitmask {
     }
 }
 
+#[cfg(feature = "sdl2")]
 impl TryFrom<sdl2::keyboard::Keycode> for KeyGroupBitmask {
     type Error = ();
     fn try_from(v: sdl2::keyboard::Keycode) -> Result<Self, Self::Error> {

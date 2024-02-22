@@ -7,5 +7,5 @@ edition = "2021"
 
 [dependencies]
 clap = { version = "4.5.1", features = ["derive"] }
-lib-inputstream = { path = "../lib-inputstream" }
+lib-inputstream = { path = "../lib-inputstream", features = ["sdl2"] }
 sdl2 = "0.36.0"
