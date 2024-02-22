@@ -3,7 +3,10 @@ use evdev::{uinput::VirtualDeviceBuilder, AttributeSet, EventType, InputEvent, K
 use lib_inputstream::{
     consts::KEYBOARD_DEVICE_NAME,
     input_event::KeyboardEvent,
-    key_group::{keyboard_key_group1::KeyboardKeyGroup1, keyboard_key_group2::KeyboardKeyGroup2},
+    key_group::{
+        keyboard_key_group1::KeyboardKeyGroup1, keyboard_key_group2::KeyboardKeyGroup2,
+        keyboard_key_group3::KeyboardKeyGroup3,
+    },
 };
 
 use crate::event_handlers::handler::{EventHandler, KeyboardEventHandler};
@@ -20,18 +23,24 @@ impl EventHandler<KeyboardEvent> for KeyboardEventHandler {
 
         let mut group1 = KeyboardKeyGroup1::new();
         let mut group2 = KeyboardKeyGroup2::new();
+        let mut group3 = KeyboardKeyGroup3::new();
 
         loop {
             if let Ok(msg) = receiver.recv() {
                 let mut events = vec![];
                 group1.check_states(msg.key_group1);
                 group2.check_states(msg.key_group2);
+                group3.check_states(msg.key_group3);
 
                 for (key, pressed) in Vec::<(Key, bool)>::from(group1.clone()) {
                     events.push(InputEvent::new(EventType::KEY, key.code(), pressed.into()));
                 }
 
                 for (key, pressed) in Vec::<(Key, bool)>::from(group2.clone()) {
+                    events.push(InputEvent::new(EventType::KEY, key.code(), pressed.into()));
+                }
+
+                for (key, pressed) in Vec::<(Key, bool)>::from(group3.clone()) {
                     events.push(InputEvent::new(EventType::KEY, key.code(), pressed.into()));
                 }
 
@@ -109,4 +118,38 @@ fn add_buttons(buttons: &mut AttributeSet<Key>) {
     buttons.insert(Key::KEY_SLASH);
     buttons.insert(Key::KEY_SEMICOLON);
     buttons.insert(Key::KEY_APOSTROPHE);
+
+    // Group 3
+    buttons.insert(Key::KEY_F1);
+    buttons.insert(Key::KEY_F2);
+    buttons.insert(Key::KEY_F3);
+    buttons.insert(Key::KEY_F4);
+    buttons.insert(Key::KEY_F5);
+    buttons.insert(Key::KEY_F6);
+    buttons.insert(Key::KEY_F7);
+    buttons.insert(Key::KEY_F8);
+    buttons.insert(Key::KEY_F9);
+    buttons.insert(Key::KEY_F10);
+    buttons.insert(Key::KEY_F11);
+    buttons.insert(Key::KEY_F12);
+    buttons.insert(Key::KEY_LEFT);
+    buttons.insert(Key::KEY_RIGHT);
+    buttons.insert(Key::KEY_UP);
+    buttons.insert(Key::KEY_DOWN);
+    buttons.insert(Key::KEY_INSERT);
+    buttons.insert(Key::KEY_DELETE);
+    buttons.insert(Key::KEY_HOME);
+    buttons.insert(Key::KEY_END);
+    buttons.insert(Key::KEY_PAGEUP);
+    buttons.insert(Key::KEY_PAGEDOWN);
+    buttons.insert(Key::KEY_NUMERIC_0);
+    buttons.insert(Key::KEY_NUMERIC_1);
+    buttons.insert(Key::KEY_NUMERIC_2);
+    buttons.insert(Key::KEY_NUMERIC_3);
+    buttons.insert(Key::KEY_NUMERIC_4);
+    buttons.insert(Key::KEY_NUMERIC_5);
+    buttons.insert(Key::KEY_NUMERIC_6);
+    buttons.insert(Key::KEY_NUMERIC_7);
+    buttons.insert(Key::KEY_NUMERIC_8);
+    buttons.insert(Key::KEY_NUMERIC_9);
 }
