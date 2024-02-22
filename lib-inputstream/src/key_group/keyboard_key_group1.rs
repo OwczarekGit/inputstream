@@ -88,6 +88,7 @@ impl From<KeyboardKeyGroup1> for Vec<(evdev::Key, bool)> {
     fn from(v: KeyboardKeyGroup1) -> Self {
         use evdev::Key;
         v.0.into_iter()
+            .filter(|k| k.should_fire())
             .map(|k| match k.bit() {
                 0 => (Key::KEY_A, k.pressed()),
                 1 => (Key::KEY_B, k.pressed()),

@@ -50,8 +50,6 @@ impl EventHandler<KeyboardEvent> for KeyboardEventHandler {
                 let mut events = vec![];
                 group1.check_states(msg.key_group1);
 
-                // FIXME: This is always giving all the events.
-                //        limit that only to changes.
                 for (key, pressed) in Vec::<(Key, bool)>::from(group1.clone()) {
                     events.push(InputEvent::new(EventType::KEY, key.code(), pressed.into()));
                 }
