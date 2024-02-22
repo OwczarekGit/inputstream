@@ -1,4 +1,4 @@
-use std::{io::Write, net::TcpStream, time::Duration};
+use std::{io::Write, net::TcpStream, thread, time::Duration};
 mod config;
 
 use clap::Parser;
@@ -158,6 +158,6 @@ pub fn main() {
                 );
             }
         }
-        ::std::thread::sleep(Duration::new(0, 1_000_000_000u32 / 60));
+        thread::sleep(Duration::from_millis(config.rate));
     }
 }
