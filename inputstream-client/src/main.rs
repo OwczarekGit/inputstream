@@ -26,8 +26,8 @@ pub fn main() {
 
     let mut canvas = window.into_canvas().build().unwrap();
 
-    sdl_context.mouse().set_relative_mouse_mode(true);
-    sdl_context.mouse().show_cursor(true);
+    //sdl_context.mouse().set_relative_mouse_mode(true);
+    //sdl_context.mouse().show_cursor(true);
 
     canvas.set_draw_color(Color::RGB(0x44, 0x44, 0x44));
     canvas.clear();
@@ -85,11 +85,12 @@ pub fn main() {
                     ..
                 } => {
                     if let Ok(bit) = KeyGroupBitmask::try_from(keycode) {
-                        button_group1 &= !(1 << *bit);
-                    } else if let Ok(bit) = KeyGroupBitmask::try_from(keycode) {
-                        button_group2 &= !(1 << *bit);
-                    } else if let Ok(bit) = KeyGroupBitmask::try_from(keycode) {
-                        button_group3 &= !(1 << *bit);
+                        match bit.get() {
+                            (key, 1) => button_group1 &= !(1 << key),
+                            (key, 2) => button_group2 &= !(1 << key),
+                            (key, 3) => button_group3 &= !(1 << key),
+                            _ => {}
+                        }
                     }
                 }
                 Event::KeyDown {
@@ -98,11 +99,12 @@ pub fn main() {
                     ..
                 } => {
                     if let Ok(bit) = KeyGroupBitmask::try_from(keycode) {
-                        button_group1 |= 1 << *bit;
-                    } else if let Ok(bit) = KeyGroupBitmask::try_from(keycode) {
-                        button_group2 |= 1 << *bit;
-                    } else if let Ok(bit) = KeyGroupBitmask::try_from(keycode) {
-                        button_group3 |= 1 << *bit;
+                        match bit.get() {
+                            (key, 1) => button_group1 |= 1 << key,
+                            (key, 2) => button_group2 |= 1 << key,
+                            (key, 3) => button_group3 |= 1 << key,
+                            _ => {}
+                        }
                     }
                 }
                 _ => {}
