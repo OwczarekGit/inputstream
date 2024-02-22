@@ -3,7 +3,7 @@ mod config;
 
 use clap::Parser;
 use config::Config;
-use lib_inputstream::consts::{KEYBOARD_PROTOCOL_NAME, MOUSE_PROTOCOL_NAME};
+use lib_inputstream::consts::{KEYBOARD_PROTOCOL_NAME, MOUSE_PROTOCOL_NAME, OSU_PROTOCOL_NAME};
 use sdl2::{event::Event, keyboard::Keycode, mouse::MouseButton, pixels::Color};
 
 pub fn main() {
@@ -31,16 +31,46 @@ pub fn main() {
     canvas.present();
 
     let mut m_buttons = 0u32;
+    let mut osu_keys_state = 0u32;
     let mut button_group1 = 0u32;
 
     let mut event_pump = sdl_context.event_pump().unwrap();
     'running: loop {
+        let prev_osu_keys = osu_keys_state;
         let prev_bg1 = button_group1;
         let prev_m_buttons = m_buttons;
         let mut delta_wheel = 0f32;
         for event in event_pump.poll_iter() {
             match event {
                 Event::Quit { .. } => break 'running,
+                Event::KeyDown {
+                    keycode: Some(Keycode::Z),
+                    repeat: false,
+                    ..
+                } => {
+                    osu_keys_state |= 0x01;
+                }
+                Event::KeyDown {
+                    keycode: Some(Keycode::X),
+                    repeat: false,
+                    ..
+                } => {
+                    osu_keys_state |= 0x02;
+                }
+                Event::KeyUp {
+                    keycode: Some(Keycode::Z),
+                    repeat: false,
+                    ..
+                } => {
+                    osu_keys_state &= !0x01;
+                }
+                Event::KeyUp {
+                    keycode: Some(Keycode::X),
+                    repeat: false,
+                    ..
+                } => {
+                    osu_keys_state &= !0x02;
+                }
                 Event::MouseWheel { precise_y, .. } => delta_wheel = precise_y,
                 Event::KeyUp {
                     keycode: Some(keycode),
@@ -156,6 +186,10 @@ pub fn main() {
                     format!("{MOUSE_PROTOCOL_NAME}|{dx};{dy};{delta_wheel};{m_buttons}\n")
                         .as_bytes(),
                 );
+            }
+
+            if prev_osu_keys != osu_keys_state {
+                let _ = socket.write(format!("{OSU_PROTOCOL_NAME}|{osu_keys_state}\n").as_bytes());
             }
         }
         thread::sleep(Duration::from_millis(config.rate));
