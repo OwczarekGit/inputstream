@@ -35,12 +35,12 @@ impl KeyboardKeyGroup1 {
             KeyState::new(23),
             KeyState::new(24),
             KeyState::new(25),
-            KeyState::new(26),
-            KeyState::new(27),
-            KeyState::new(28),
-            KeyState::new(29),
-            KeyState::new(30),
-            KeyState::new(31),
+            //KeyState::new(26),
+            //KeyState::new(27),
+            //KeyState::new(28),
+            //KeyState::new(29),
+            //KeyState::new(30),
+            //KeyState::new(31),
         ])
     }
 
@@ -60,7 +60,7 @@ impl Display for KeyboardKeyGroup1 {
         let mut result = 0;
         for key in &self.0 {
             if key.pressed() {
-                result |= key.bit();
+                result |= 1 << key.bit();
             }
         }
 
@@ -115,7 +115,7 @@ impl From<KeyboardKeyGroup1> for Vec<(evdev::Key, bool)> {
                 23 => (Key::KEY_X, k.pressed()),
                 24 => (Key::KEY_Y, k.pressed()),
                 25 => (Key::KEY_Z, k.pressed()),
-                _ => (Key::KEY_A, false),
+                key => panic!("INVALID KEY: '{key}'"),
             })
             .collect::<Vec<_>>()
     }

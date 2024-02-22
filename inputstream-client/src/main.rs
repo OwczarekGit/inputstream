@@ -39,73 +39,74 @@ pub fn main() {
                     repeat: false,
                     ..
                 } => {
-                    let bit: u32 = match keycode {
-                        Keycode::A => 0,
-                        Keycode::B => 1,
-                        Keycode::C => 2,
-                        Keycode::D => 3,
-                        Keycode::E => 4,
-                        Keycode::F => 5,
-                        Keycode::G => 6,
-                        Keycode::H => 7,
-                        Keycode::I => 8,
-                        Keycode::J => 9,
-                        Keycode::K => 10,
-                        Keycode::L => 11,
-                        Keycode::M => 12,
-                        Keycode::N => 13,
-                        Keycode::O => 14,
-                        Keycode::P => 15,
-                        Keycode::Q => 16,
-                        Keycode::R => 17,
-                        Keycode::S => 18,
-                        Keycode::T => 19,
-                        Keycode::U => 20,
-                        Keycode::V => 21,
-                        Keycode::W => 22,
-                        Keycode::X => 23,
-                        Keycode::Y => 24,
-                        Keycode::Z => 25,
-                        _ => 0,
-                    };
-
-                    button_group1 &= !(1 << bit);
+                    if let Some(bit) = match keycode {
+                        Keycode::A => Some(0u32),
+                        Keycode::B => Some(1),
+                        Keycode::C => Some(2),
+                        Keycode::D => Some(3),
+                        Keycode::E => Some(4),
+                        Keycode::F => Some(5),
+                        Keycode::G => Some(6),
+                        Keycode::H => Some(7),
+                        Keycode::I => Some(8),
+                        Keycode::J => Some(9),
+                        Keycode::K => Some(10),
+                        Keycode::L => Some(11),
+                        Keycode::M => Some(12),
+                        Keycode::N => Some(13),
+                        Keycode::O => Some(14),
+                        Keycode::P => Some(15),
+                        Keycode::Q => Some(16),
+                        Keycode::R => Some(17),
+                        Keycode::S => Some(18),
+                        Keycode::T => Some(19),
+                        Keycode::U => Some(20),
+                        Keycode::V => Some(21),
+                        Keycode::W => Some(22),
+                        Keycode::X => Some(23),
+                        Keycode::Y => Some(24),
+                        Keycode::Z => Some(25),
+                        _ => None,
+                    } {
+                        button_group1 &= !(1 << bit);
+                    }
                 }
                 Event::KeyDown {
                     keycode: Some(keycode),
                     repeat: false,
                     ..
                 } => {
-                    let bit: u32 = match keycode {
-                        Keycode::A => 0,
-                        Keycode::B => 1,
-                        Keycode::C => 2,
-                        Keycode::D => 3,
-                        Keycode::E => 4,
-                        Keycode::F => 5,
-                        Keycode::G => 6,
-                        Keycode::H => 7,
-                        Keycode::I => 8,
-                        Keycode::J => 9,
-                        Keycode::K => 10,
-                        Keycode::L => 11,
-                        Keycode::M => 12,
-                        Keycode::N => 13,
-                        Keycode::O => 14,
-                        Keycode::P => 15,
-                        Keycode::Q => 16,
-                        Keycode::R => 17,
-                        Keycode::S => 18,
-                        Keycode::T => 19,
-                        Keycode::U => 20,
-                        Keycode::V => 21,
-                        Keycode::W => 22,
-                        Keycode::X => 23,
-                        Keycode::Y => 24,
-                        Keycode::Z => 25,
-                        _ => 0,
-                    };
-                    button_group1 |= 1 << bit;
+                    if let Some(bit) = match keycode {
+                        Keycode::A => Some(0u32),
+                        Keycode::B => Some(1),
+                        Keycode::C => Some(2),
+                        Keycode::D => Some(3),
+                        Keycode::E => Some(4),
+                        Keycode::F => Some(5),
+                        Keycode::G => Some(6),
+                        Keycode::H => Some(7),
+                        Keycode::I => Some(8),
+                        Keycode::J => Some(9),
+                        Keycode::K => Some(10),
+                        Keycode::L => Some(11),
+                        Keycode::M => Some(12),
+                        Keycode::N => Some(13),
+                        Keycode::O => Some(14),
+                        Keycode::P => Some(15),
+                        Keycode::Q => Some(16),
+                        Keycode::R => Some(17),
+                        Keycode::S => Some(18),
+                        Keycode::T => Some(19),
+                        Keycode::U => Some(20),
+                        Keycode::V => Some(21),
+                        Keycode::W => Some(22),
+                        Keycode::X => Some(23),
+                        Keycode::Y => Some(24),
+                        Keycode::Z => Some(25),
+                        _ => None,
+                    } {
+                        button_group1 |= 1 << bit;
+                    }
                 }
                 _ => {}
             };
@@ -133,8 +134,10 @@ pub fn main() {
                     .write(format!("{KEYBOARD_PROTOCOL_NAME}|{button_group1};0;0;0\n").as_bytes());
             }
 
-            //let _ =
-            //  socket.write(format!("{MOUSE_PROTOCOL_NAME}|{dx};{dy};0;{m_buttons}\n").as_bytes());
+            if dx.abs() > 0.0 || dy.abs() > 0.0 || m_buttons > 0 {
+                let _ = socket
+                    .write(format!("{MOUSE_PROTOCOL_NAME}|{dx};{dy};0;{m_buttons}\n").as_bytes());
+            }
         }
         ::std::thread::sleep(Duration::new(0, 1_000_000_000u32 / 60));
     }

@@ -6,10 +6,7 @@ pub struct KeyState {
 
 impl KeyState {
     pub fn new(bit: u32) -> Self {
-        Self {
-            state: false,
-            bit: 1 << bit,
-        }
+        Self { state: false, bit }
     }
 
     pub fn bit(&self) -> u32 {
@@ -21,7 +18,7 @@ impl KeyState {
     }
 
     pub fn get_state(&mut self, mask: u32) -> Option<bool> {
-        let current_state = (mask & (0xffff & self.bit)) > 0;
+        let current_state = (mask & (0xffffffff & (1 << self.bit))) > 0;
 
         if current_state != self.state {
             self.state = current_state;
