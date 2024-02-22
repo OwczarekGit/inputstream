@@ -116,6 +116,44 @@ pub fn main() {
                     } {
                         button_group1 &= !(1 << bit);
                     }
+
+                    if let Some(bit) = match keycode {
+                        Keycode::Num0 => Some(0u32),
+                        Keycode::Num1 => Some(1),
+                        Keycode::Num2 => Some(2),
+                        Keycode::Num3 => Some(3),
+                        Keycode::Num4 => Some(4),
+                        Keycode::Num5 => Some(5),
+                        Keycode::Num6 => Some(6),
+                        Keycode::Num7 => Some(7),
+                        Keycode::Num8 => Some(8),
+                        Keycode::Num9 => Some(9),
+                        Keycode::Minus => Some(10),
+                        Keycode::Equals => Some(11),
+                        Keycode::Backspace => Some(12),
+                        Keycode::Backquote => Some(13),
+                        Keycode::Return => Some(14),
+                        Keycode::Tab => Some(15),
+                        Keycode::Escape => Some(16),
+                        Keycode::CapsLock => Some(17),
+                        Keycode::LShift => Some(18),
+                        Keycode::LCtrl => Some(19),
+                        Keycode::LAlt => Some(20),
+                        Keycode::LGui => Some(21),
+                        Keycode::Space => Some(22),
+                        Keycode::RAlt => Some(23),
+                        Keycode::Application => Some(24),
+                        Keycode::RCtrl => Some(25),
+                        Keycode::RShift => Some(26),
+                        Keycode::Comma => Some(27),
+                        Keycode::Period => Some(28),
+                        Keycode::Slash => Some(29),
+                        Keycode::Semicolon => Some(30),
+                        Keycode::Quote => Some(31),
+                        _ => None,
+                    } {
+                        button_group2 &= !(1 << bit);
+                    }
                 }
                 Event::KeyDown {
                     keycode: Some(keycode),
