@@ -34,12 +34,12 @@ impl KeyboardKeyGroup2 {
             KeyState::new(23),
             KeyState::new(24),
             KeyState::new(25),
-            //KeyState::new(26),
-            //KeyState::new(27),
-            //KeyState::new(28),
-            //KeyState::new(29),
-            //KeyState::new(30),
-            //KeyState::new(31),
+            KeyState::new(26),
+            KeyState::new(27),
+            KeyState::new(28),
+            KeyState::new(29),
+            KeyState::new(30),
+            KeyState::new(31),
         ])
     }
 

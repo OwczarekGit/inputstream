@@ -33,11 +33,13 @@ pub fn main() {
     let mut m_buttons = 0u32;
     let mut osu_keys_state = 0u32;
     let mut button_group1 = 0u32;
+    let mut button_group2 = 0u32;
 
     let mut event_pump = sdl_context.event_pump().unwrap();
     'running: loop {
         let prev_osu_keys = osu_keys_state;
         let prev_bg1 = button_group1;
+        let prev_bg2 = button_group2;
         let prev_m_buttons = m_buttons;
         let mut delta_wheel = 0f32;
         for event in event_pump.poll_iter() {
@@ -157,6 +159,44 @@ pub fn main() {
                     } {
                         button_group1 |= 1 << bit;
                     }
+
+                    if let Some(bit) = match keycode {
+                        Keycode::Num0 => Some(0u32),
+                        Keycode::Num1 => Some(1),
+                        Keycode::Num2 => Some(2),
+                        Keycode::Num3 => Some(3),
+                        Keycode::Num4 => Some(4),
+                        Keycode::Num5 => Some(5),
+                        Keycode::Num6 => Some(6),
+                        Keycode::Num7 => Some(7),
+                        Keycode::Num8 => Some(8),
+                        Keycode::Num9 => Some(9),
+                        Keycode::Minus => Some(10),
+                        Keycode::Equals => Some(11),
+                        Keycode::Backspace => Some(12),
+                        Keycode::Backquote => Some(13),
+                        Keycode::Return => Some(14),
+                        Keycode::Tab => Some(15),
+                        Keycode::Escape => Some(16),
+                        Keycode::CapsLock => Some(17),
+                        Keycode::LShift => Some(18),
+                        Keycode::LCtrl => Some(19),
+                        Keycode::LAlt => Some(20),
+                        Keycode::LGui => Some(21),
+                        Keycode::Space => Some(22),
+                        Keycode::RAlt => Some(23),
+                        Keycode::Application => Some(24),
+                        Keycode::RCtrl => Some(25),
+                        Keycode::RShift => Some(26),
+                        Keycode::Comma => Some(27),
+                        Keycode::Period => Some(28),
+                        Keycode::Slash => Some(29),
+                        Keycode::Semicolon => Some(30),
+                        Keycode::Quote => Some(31),
+                        _ => None,
+                    } {
+                        button_group2 |= 1 << bit;
+                    }
                 }
                 _ => {}
             };
@@ -184,9 +224,11 @@ pub fn main() {
         }
 
         if let Ok(socket) = &mut socket {
-            if prev_bg1 != button_group1 {
-                let _ = socket
-                    .write(format!("{KEYBOARD_PROTOCOL_NAME}|{button_group1};0;0;0\n").as_bytes());
+            if prev_bg1 != button_group1 || prev_bg2 != button_group2 {
+                let _ = socket.write(
+                    format!("{KEYBOARD_PROTOCOL_NAME}|{button_group1};{button_group2};0;0\n")
+                        .as_bytes(),
+                );
             }
 
             if dx.abs() > 0.0

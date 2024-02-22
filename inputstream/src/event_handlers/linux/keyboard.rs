@@ -1,8 +1,9 @@
 use crate::Result;
 use evdev::{uinput::VirtualDeviceBuilder, AttributeSet, EventType, InputEvent, Key};
 use lib_inputstream::{
-    consts::KEYBOARD_DEVICE_NAME, input_event::KeyboardEvent,
-    key_group::keyboard_key_group1::KeyboardKeyGroup1,
+    consts::KEYBOARD_DEVICE_NAME,
+    input_event::KeyboardEvent,
+    key_group::{keyboard_key_group1::KeyboardKeyGroup1, keyboard_key_group2::KeyboardKeyGroup2},
 };
 
 use crate::event_handlers::handler::{EventHandler, KeyboardEventHandler};
@@ -10,39 +11,7 @@ use crate::event_handlers::handler::{EventHandler, KeyboardEventHandler};
 impl EventHandler<KeyboardEvent> for KeyboardEventHandler {
     fn listen(&self, receiver: std::sync::mpsc::Receiver<KeyboardEvent>) -> Result<()> {
         let mut buttons = AttributeSet::<Key>::new();
-
-        buttons.insert(Key::KEY_A);
-        buttons.insert(Key::KEY_B);
-        buttons.insert(Key::KEY_C);
-        buttons.insert(Key::KEY_D);
-        buttons.insert(Key::KEY_E);
-        buttons.insert(Key::KEY_F);
-        buttons.insert(Key::KEY_G);
-        buttons.insert(Key::KEY_H);
-        buttons.insert(Key::KEY_I);
-        buttons.insert(Key::KEY_J);
-        buttons.insert(Key::KEY_K);
-        buttons.insert(Key::KEY_L);
-        buttons.insert(Key::KEY_M);
-        buttons.insert(Key::KEY_N);
-        buttons.insert(Key::KEY_O);
-        buttons.insert(Key::KEY_P);
-        buttons.insert(Key::KEY_Q);
-        buttons.insert(Key::KEY_R);
-        buttons.insert(Key::KEY_S);
-        buttons.insert(Key::KEY_T);
-        buttons.insert(Key::KEY_U);
-        buttons.insert(Key::KEY_V);
-        buttons.insert(Key::KEY_W);
-        buttons.insert(Key::KEY_X);
-        buttons.insert(Key::KEY_Y);
-        buttons.insert(Key::KEY_Z);
-        buttons.insert(Key::KEY_BACKSLASH);
-        buttons.insert(Key::KEY_LEFTBRACE);
-        buttons.insert(Key::KEY_RIGHTBRACE);
-        buttons.insert(Key::KEY_PRINT);
-        buttons.insert(Key::KEY_SCROLLLOCK);
-        buttons.insert(Key::KEY_PAUSE);
+        add_buttons(&mut buttons);
 
         let mut device = VirtualDeviceBuilder::new()?
             .name(KEYBOARD_DEVICE_NAME)
@@ -50,17 +19,94 @@ impl EventHandler<KeyboardEvent> for KeyboardEventHandler {
             .build()?;
 
         let mut group1 = KeyboardKeyGroup1::new();
+        let mut group2 = KeyboardKeyGroup2::new();
 
         loop {
             if let Ok(msg) = receiver.recv() {
                 let mut events = vec![];
                 group1.check_states(msg.key_group1);
+                group2.check_states(msg.key_group2);
 
                 for (key, pressed) in Vec::<(Key, bool)>::from(group1.clone()) {
                     events.push(InputEvent::new(EventType::KEY, key.code(), pressed.into()));
                 }
+
+                for (key, pressed) in Vec::<(Key, bool)>::from(group2.clone()) {
+                    events.push(InputEvent::new(EventType::KEY, key.code(), pressed.into()));
+                }
+
                 let _ = device.emit(&events);
             }
         }
     }
+}
+
+fn add_buttons(buttons: &mut AttributeSet<Key>) {
+    // Group 1
+    buttons.insert(Key::KEY_A);
+    buttons.insert(Key::KEY_B);
+    buttons.insert(Key::KEY_C);
+    buttons.insert(Key::KEY_D);
+    buttons.insert(Key::KEY_E);
+    buttons.insert(Key::KEY_F);
+    buttons.insert(Key::KEY_G);
+    buttons.insert(Key::KEY_H);
+    buttons.insert(Key::KEY_I);
+    buttons.insert(Key::KEY_J);
+    buttons.insert(Key::KEY_K);
+    buttons.insert(Key::KEY_L);
+    buttons.insert(Key::KEY_M);
+    buttons.insert(Key::KEY_N);
+    buttons.insert(Key::KEY_O);
+    buttons.insert(Key::KEY_P);
+    buttons.insert(Key::KEY_Q);
+    buttons.insert(Key::KEY_R);
+    buttons.insert(Key::KEY_S);
+    buttons.insert(Key::KEY_T);
+    buttons.insert(Key::KEY_U);
+    buttons.insert(Key::KEY_V);
+    buttons.insert(Key::KEY_W);
+    buttons.insert(Key::KEY_X);
+    buttons.insert(Key::KEY_Y);
+    buttons.insert(Key::KEY_Z);
+    buttons.insert(Key::KEY_BACKSLASH);
+    buttons.insert(Key::KEY_LEFTBRACE);
+    buttons.insert(Key::KEY_RIGHTBRACE);
+    buttons.insert(Key::KEY_PRINT);
+    buttons.insert(Key::KEY_SCROLLLOCK);
+    buttons.insert(Key::KEY_PAUSE);
+
+    // Group 2
+    buttons.insert(Key::KEY_0);
+    buttons.insert(Key::KEY_1);
+    buttons.insert(Key::KEY_2);
+    buttons.insert(Key::KEY_3);
+    buttons.insert(Key::KEY_4);
+    buttons.insert(Key::KEY_5);
+    buttons.insert(Key::KEY_6);
+    buttons.insert(Key::KEY_7);
+    buttons.insert(Key::KEY_8);
+    buttons.insert(Key::KEY_9);
+    buttons.insert(Key::KEY_MINUS);
+    buttons.insert(Key::KEY_EQUAL);
+    buttons.insert(Key::KEY_BACKSPACE);
+    buttons.insert(Key::KEY_GRAVE);
+    buttons.insert(Key::KEY_ENTER);
+    buttons.insert(Key::KEY_TAB);
+    buttons.insert(Key::KEY_ESC);
+    buttons.insert(Key::KEY_CAPSLOCK);
+    buttons.insert(Key::KEY_LEFTSHIFT);
+    buttons.insert(Key::KEY_LEFTCTRL);
+    buttons.insert(Key::KEY_LEFTALT);
+    buttons.insert(Key::KEY_LEFTMETA);
+    buttons.insert(Key::KEY_SPACE);
+    buttons.insert(Key::KEY_RIGHTALT);
+    buttons.insert(Key::KEY_CONTEXT_MENU);
+    buttons.insert(Key::KEY_RIGHTCTRL);
+    buttons.insert(Key::KEY_RIGHTSHIFT);
+    buttons.insert(Key::KEY_COMMA);
+    buttons.insert(Key::KEY_DOT);
+    buttons.insert(Key::KEY_SLASH);
+    buttons.insert(Key::KEY_SEMICOLON);
+    buttons.insert(Key::KEY_APOSTROPHE);
 }
