@@ -3,7 +3,10 @@ mod config;
 
 use clap::Parser;
 use config::Config;
-use lib_inputstream::consts::{KEYBOARD_PROTOCOL_NAME, MOUSE_PROTOCOL_NAME, OSU_PROTOCOL_NAME};
+use lib_inputstream::{
+    consts::{KEYBOARD_PROTOCOL_NAME, MOUSE_PROTOCOL_NAME, OSU_PROTOCOL_NAME},
+    key_group::key_group_bitmask::KeyGroupBitmask,
+};
 use sdl2::{event::Event, keyboard::Keycode, mouse::MouseButton, pixels::Color};
 
 pub fn main() {
@@ -81,118 +84,16 @@ pub fn main() {
                     repeat: false,
                     ..
                 } => {
-                    if let Some(bit) = match keycode {
-                        Keycode::A => Some(0u32),
-                        Keycode::B => Some(1),
-                        Keycode::C => Some(2),
-                        Keycode::D => Some(3),
-                        Keycode::E => Some(4),
-                        Keycode::F => Some(5),
-                        Keycode::G => Some(6),
-                        Keycode::H => Some(7),
-                        Keycode::I => Some(8),
-                        Keycode::J => Some(9),
-                        Keycode::K => Some(10),
-                        Keycode::L => Some(11),
-                        Keycode::M => Some(12),
-                        Keycode::N => Some(13),
-                        Keycode::O => Some(14),
-                        Keycode::P => Some(15),
-                        Keycode::Q => Some(16),
-                        Keycode::R => Some(17),
-                        Keycode::S => Some(18),
-                        Keycode::T => Some(19),
-                        Keycode::U => Some(20),
-                        Keycode::V => Some(21),
-                        Keycode::W => Some(22),
-                        Keycode::X => Some(23),
-                        Keycode::Y => Some(24),
-                        Keycode::Z => Some(25),
-                        Keycode::Backslash => Some(26),
-                        Keycode::LeftBracket => Some(27),
-                        Keycode::RightBracket => Some(28),
-                        Keycode::PrintScreen => Some(29),
-                        Keycode::ScrollLock => Some(30),
-                        Keycode::Pause => Some(31),
-                        _ => None,
-                    } {
-                        button_group1 &= !(1 << bit);
+                    if let Ok(bit) = KeyGroupBitmask::try_from(keycode) {
+                        button_group1 &= !(1 << *bit);
                     }
 
-                    if let Some(bit) = match keycode {
-                        Keycode::Num0 => Some(0u32),
-                        Keycode::Num1 => Some(1),
-                        Keycode::Num2 => Some(2),
-                        Keycode::Num3 => Some(3),
-                        Keycode::Num4 => Some(4),
-                        Keycode::Num5 => Some(5),
-                        Keycode::Num6 => Some(6),
-                        Keycode::Num7 => Some(7),
-                        Keycode::Num8 => Some(8),
-                        Keycode::Num9 => Some(9),
-                        Keycode::Minus => Some(10),
-                        Keycode::Equals => Some(11),
-                        Keycode::Backspace => Some(12),
-                        Keycode::Backquote => Some(13),
-                        Keycode::Return => Some(14),
-                        Keycode::Tab => Some(15),
-                        Keycode::Escape => Some(16),
-                        Keycode::CapsLock => Some(17),
-                        Keycode::LShift => Some(18),
-                        Keycode::LCtrl => Some(19),
-                        Keycode::LAlt => Some(20),
-                        Keycode::LGui => Some(21),
-                        Keycode::Space => Some(22),
-                        Keycode::RAlt => Some(23),
-                        Keycode::Application => Some(24),
-                        Keycode::RCtrl => Some(25),
-                        Keycode::RShift => Some(26),
-                        Keycode::Comma => Some(27),
-                        Keycode::Period => Some(28),
-                        Keycode::Slash => Some(29),
-                        Keycode::Semicolon => Some(30),
-                        Keycode::Quote => Some(31),
-                        _ => None,
-                    } {
-                        button_group2 &= !(1 << bit);
+                    if let Ok(bit) = KeyGroupBitmask::try_from(keycode) {
+                        button_group2 &= !(1 << *bit);
                     }
 
-                    if let Some(bit) = match keycode {
-                        Keycode::F1 => Some(0u32),
-                        Keycode::F2 => Some(1),
-                        Keycode::F3 => Some(2),
-                        Keycode::F4 => Some(3),
-                        Keycode::F5 => Some(4),
-                        Keycode::F6 => Some(5),
-                        Keycode::F7 => Some(6),
-                        Keycode::F8 => Some(7),
-                        Keycode::F9 => Some(8),
-                        Keycode::F10 => Some(9),
-                        Keycode::F11 => Some(10),
-                        Keycode::F12 => Some(11),
-                        Keycode::Left => Some(12),
-                        Keycode::Right => Some(13),
-                        Keycode::Up => Some(14),
-                        Keycode::Down => Some(15),
-                        Keycode::Insert => Some(16),
-                        Keycode::Delete => Some(17),
-                        Keycode::Home => Some(18),
-                        Keycode::End => Some(19),
-                        Keycode::PageUp => Some(20),
-                        Keycode::PageDown => Some(21),
-                        Keycode::Num0 => Some(22),
-                        Keycode::Num1 => Some(23),
-                        Keycode::Num2 => Some(24),
-                        Keycode::Num3 => Some(25),
-                        Keycode::Num4 => Some(26),
-                        Keycode::Num5 => Some(27),
-                        Keycode::Num6 => Some(28),
-                        Keycode::Num7 => Some(29),
-                        Keycode::Num8 => Some(30),
-                        Keycode::Num9 => Some(31),
-                        _ => None,
-                    } {
-                        button_group3 &= !(1 << bit);
+                    if let Ok(bit) = KeyGroupBitmask::try_from(keycode) {
+                        button_group3 &= !(1 << *bit);
                     }
                 }
                 Event::KeyDown {
@@ -200,118 +101,16 @@ pub fn main() {
                     repeat: false,
                     ..
                 } => {
-                    if let Some(bit) = match keycode {
-                        Keycode::A => Some(0u32),
-                        Keycode::B => Some(1),
-                        Keycode::C => Some(2),
-                        Keycode::D => Some(3),
-                        Keycode::E => Some(4),
-                        Keycode::F => Some(5),
-                        Keycode::G => Some(6),
-                        Keycode::H => Some(7),
-                        Keycode::I => Some(8),
-                        Keycode::J => Some(9),
-                        Keycode::K => Some(10),
-                        Keycode::L => Some(11),
-                        Keycode::M => Some(12),
-                        Keycode::N => Some(13),
-                        Keycode::O => Some(14),
-                        Keycode::P => Some(15),
-                        Keycode::Q => Some(16),
-                        Keycode::R => Some(17),
-                        Keycode::S => Some(18),
-                        Keycode::T => Some(19),
-                        Keycode::U => Some(20),
-                        Keycode::V => Some(21),
-                        Keycode::W => Some(22),
-                        Keycode::X => Some(23),
-                        Keycode::Y => Some(24),
-                        Keycode::Z => Some(25),
-                        Keycode::Backslash => Some(26),
-                        Keycode::LeftBracket => Some(27),
-                        Keycode::RightBracket => Some(28),
-                        Keycode::PrintScreen => Some(29),
-                        Keycode::ScrollLock => Some(30),
-                        Keycode::Pause => Some(31),
-                        _ => None,
-                    } {
-                        button_group1 |= 1 << bit;
+                    if let Ok(bit) = KeyGroupBitmask::try_from(keycode) {
+                        button_group1 |= 1 << *bit;
                     }
 
-                    if let Some(bit) = match keycode {
-                        Keycode::Num0 => Some(0u32),
-                        Keycode::Num1 => Some(1),
-                        Keycode::Num2 => Some(2),
-                        Keycode::Num3 => Some(3),
-                        Keycode::Num4 => Some(4),
-                        Keycode::Num5 => Some(5),
-                        Keycode::Num6 => Some(6),
-                        Keycode::Num7 => Some(7),
-                        Keycode::Num8 => Some(8),
-                        Keycode::Num9 => Some(9),
-                        Keycode::Minus => Some(10),
-                        Keycode::Equals => Some(11),
-                        Keycode::Backspace => Some(12),
-                        Keycode::Backquote => Some(13),
-                        Keycode::Return => Some(14),
-                        Keycode::Tab => Some(15),
-                        Keycode::Escape => Some(16),
-                        Keycode::CapsLock => Some(17),
-                        Keycode::LShift => Some(18),
-                        Keycode::LCtrl => Some(19),
-                        Keycode::LAlt => Some(20),
-                        Keycode::LGui => Some(21),
-                        Keycode::Space => Some(22),
-                        Keycode::RAlt => Some(23),
-                        Keycode::Application => Some(24),
-                        Keycode::RCtrl => Some(25),
-                        Keycode::RShift => Some(26),
-                        Keycode::Comma => Some(27),
-                        Keycode::Period => Some(28),
-                        Keycode::Slash => Some(29),
-                        Keycode::Semicolon => Some(30),
-                        Keycode::Quote => Some(31),
-                        _ => None,
-                    } {
-                        button_group2 |= 1 << bit;
+                    if let Ok(bit) = KeyGroupBitmask::try_from(keycode) {
+                        button_group2 |= 1 << *bit;
                     }
 
-                    if let Some(bit) = match keycode {
-                        Keycode::F1 => Some(0u32),
-                        Keycode::F2 => Some(1),
-                        Keycode::F3 => Some(2),
-                        Keycode::F4 => Some(3),
-                        Keycode::F5 => Some(4),
-                        Keycode::F6 => Some(5),
-                        Keycode::F7 => Some(6),
-                        Keycode::F8 => Some(7),
-                        Keycode::F9 => Some(8),
-                        Keycode::F10 => Some(9),
-                        Keycode::F11 => Some(10),
-                        Keycode::F12 => Some(11),
-                        Keycode::Left => Some(12),
-                        Keycode::Right => Some(13),
-                        Keycode::Up => Some(14),
-                        Keycode::Down => Some(15),
-                        Keycode::Insert => Some(16),
-                        Keycode::Delete => Some(17),
-                        Keycode::Home => Some(18),
-                        Keycode::End => Some(19),
-                        Keycode::PageUp => Some(20),
-                        Keycode::PageDown => Some(21),
-                        Keycode::Num0 => Some(22),
-                        Keycode::Num1 => Some(23),
-                        Keycode::Num2 => Some(24),
-                        Keycode::Num3 => Some(25),
-                        Keycode::Num4 => Some(26),
-                        Keycode::Num5 => Some(27),
-                        Keycode::Num6 => Some(28),
-                        Keycode::Num7 => Some(29),
-                        Keycode::Num8 => Some(30),
-                        Keycode::Num9 => Some(31),
-                        _ => None,
-                    } {
-                        button_group3 |= 1 << bit;
+                    if let Ok(bit) = KeyGroupBitmask::try_from(keycode) {
+                        button_group3 |= 1 << *bit;
                     }
                 }
                 _ => {}
