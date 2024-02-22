@@ -87,6 +87,7 @@ pub fn main() {
                     if let Ok(bit) = KeyGroupBitmask::try_from(keycode) {
                         match bit.get() {
                             (key, 1) => button_group1 &= !(1 << key),
+                            (21, 2) if config.ignore_super => println!("Super key is ignored."),
                             (key, 2) => button_group2 &= !(1 << key),
                             (key, 3) => button_group3 &= !(1 << key),
                             _ => {}

@@ -14,4 +14,7 @@ pub struct Config {
     /// 1 means 1000 pools/sec
     #[arg(short, long, default_value_t = 1)]
     pub rate: u64,
+    /// Ignore super/windows key
+    #[arg(long, default_value_t = false)]
+    pub ignore_super: bool,
 }
