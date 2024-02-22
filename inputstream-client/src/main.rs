@@ -13,9 +13,6 @@ pub fn main() {
 
     let sdl_context = sdl2::init().unwrap();
 
-    sdl_context.mouse().set_relative_mouse_mode(true);
-    sdl_context.mouse().show_cursor(true);
-
     let video_subsystem = sdl_context.video().unwrap();
 
     let window = video_subsystem
@@ -26,15 +23,20 @@ pub fn main() {
 
     let mut canvas = window.into_canvas().build().unwrap();
 
+    sdl_context.mouse().set_relative_mouse_mode(true);
+    sdl_context.mouse().show_cursor(true);
+
     canvas.set_draw_color(Color::RGB(0x44, 0x44, 0x44));
     canvas.clear();
     canvas.present();
 
+    let mut m_buttons = 0u32;
     let mut button_group1 = 0u32;
 
     let mut event_pump = sdl_context.event_pump().unwrap();
     'running: loop {
         let prev_bg1 = button_group1;
+        let prev_m_buttons = m_buttons;
         for event in event_pump.poll_iter() {
             match event {
                 Event::Quit { .. } => break 'running,
@@ -118,18 +120,23 @@ pub fn main() {
         let mouse_state = event_pump.relative_mouse_state();
         let dx = mouse_state.x() as f32 * config.mouse_accel;
         let dy = mouse_state.y() as f32 * config.mouse_accel;
-        let mut m_buttons = 0u32;
 
         if mouse_state.left() {
             m_buttons |= 0x01;
+        } else {
+            m_buttons &= 0x01;
         }
 
         if mouse_state.right() {
             m_buttons |= 0x02;
+        } else {
+            m_buttons &= 0x02;
         }
 
         if mouse_state.middle() {
             m_buttons |= 0x04;
+        } else {
+            m_buttons &= 0x04;
         }
 
         if let Ok(socket) = &mut socket {
@@ -138,7 +145,7 @@ pub fn main() {
                     .write(format!("{KEYBOARD_PROTOCOL_NAME}|{button_group1};0;0;0\n").as_bytes());
             }
 
-            if dx.abs() > 0.0 || dy.abs() > 0.0 || m_buttons > 0 {
+            if dx.abs() > 0.0 || dy.abs() > 0.0 || (prev_m_buttons != m_buttons) {
                 let _ = socket
                     .write(format!("{MOUSE_PROTOCOL_NAME}|{dx};{dy};0;{m_buttons}\n").as_bytes());
             }
