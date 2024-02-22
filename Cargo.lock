@@ -170,6 +170,21 @@ dependencies = [
 ]
 
 [[package]]
+name = "inputstream-client"
+version = "0.1.0"
+dependencies = [
+ "clap",
+ "lib-inputstream",
+ "sdl2",
+]
+
+[[package]]
+name = "lazy_static"
+version = "1.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e2abad23fbc42b3700f2f279844dc832adb2b2eb069b2df918f455c4e18cc646"
+
+[[package]]
 name = "lib-inputstream"
 version = "0.1.0"
 dependencies = [
@@ -229,6 +244,29 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "dc33ff2d4973d518d823d61aa239014831e521c75da58e3df4840d3f47749d09"
 
 [[package]]
+name = "sdl2"
+version = "0.36.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8356b2697d1ead5a34f40bcc3c5d3620205fe0c7be0a14656223bfeec0258891"
+dependencies = [
+ "bitflags",
+ "lazy_static",
+ "libc",
+ "sdl2-sys",
+]
+
+[[package]]
+name = "sdl2-sys"
+version = "0.36.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "26bcacfdd45d539fb5785049feb0038a63931aa896c7763a2a12e125ec58bd29"
+dependencies = [
+ "cfg-if",
+ "libc",
+ "version-compare",
+]
+
+[[package]]
 name = "strsim"
 version = "0.11.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -282,6 +320,12 @@ name = "utf8parse"
 version = "0.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "711b9620af191e0cdc7468a8d14e709c3dcdb115b36f838e601583af800a370a"
+
+[[package]]
+name = "version-compare"
+version = "0.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "579a42fc0b8e0c63b76519a339be31bed574929511fa53c1a3acae26eb258f29"
 
 [[package]]
 name = "windows-sys"

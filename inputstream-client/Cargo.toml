@@ -1,11 +1,11 @@
 [package]
-name = "lib-inputstream"
+name = "inputstream-client"
 version = "0.1.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-
-[target.x86_64-unknown-linux-gnu.dependencies]
-evdev = "0.12.1"
+clap = { version = "4.5.1", features = ["derive"] }
+lib-inputstream = { path = "../lib-inputstream" }
+sdl2 = "0.36.0"

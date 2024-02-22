@@ -40,7 +40,7 @@ impl EventHandler<MouseEvent> for MouseEventHandler {
                     ev.push(InputEvent::new(
                         EventType::RELATIVE,
                         RelativeAxisType::REL_Y.0,
-                        -event.dy as i32,
+                        event.dy as i32,
                     ));
                 }
 

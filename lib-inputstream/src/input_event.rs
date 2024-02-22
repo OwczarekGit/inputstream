@@ -1,5 +1,7 @@
 use std::str::FromStr;
 
+use crate::consts::{KEYBOARD_PROTOCOL_NAME, MOUSE_PROTOCOL_NAME, OSU_PROTOCOL_NAME};
+
 #[derive(Debug, Clone)]
 pub enum InputEvent {
     Osu(OsuEvent),
@@ -18,8 +20,9 @@ impl FromStr for InputEvent {
             .trim();
 
         match protocol {
-            "KEYBOARD" => {
+            KEYBOARD_PROTOCOL_NAME => {
                 let mut data = split.next().ok_or("Missing data.")?.split(';');
+
                 let key_group1 = data
                     .next()
                     .ok_or("Missing keyboard group1.")?
@@ -27,9 +30,35 @@ impl FromStr for InputEvent {
                     .parse::<u32>()
                     .unwrap_or(0);
 
-                Ok(Self::Keyboard(KeyboardEvent { key_group1 }))
+                let key_group2 = data
+                    .next()
+                    .ok_or("Missing keyboard group1.")?
+                    .trim()
+                    .parse::<u32>()
+                    .unwrap_or(0);
+
+                let key_group3 = data
+                    .next()
+                    .ok_or("Missing keyboard group1.")?
+                    .trim()
+                    .parse::<u32>()
+                    .unwrap_or(0);
+
+                let key_group4 = data
+                    .next()
+                    .ok_or("Missing keyboard group1.")?
+                    .trim()
+                    .parse::<u32>()
+                    .unwrap_or(0);
+
+                Ok(Self::Keyboard(KeyboardEvent {
+                    key_group1,
+                    key_group2,
+                    key_group3,
+                    key_group4,
+                }))
             }
-            "MOUSE" => {
+            MOUSE_PROTOCOL_NAME => {
                 let mut data = split.next().ok_or("Missing data.")?.split(';');
 
                 let dx = data
@@ -69,7 +98,7 @@ impl FromStr for InputEvent {
                     btn_middle_state: buttons & 0x04 > 0,
                 }))
             }
-            "OSU" => {
+            OSU_PROTOCOL_NAME => {
                 let data = split.next().ok_or("Missing data.".to_string())?.trim();
                 let data = data
                     .parse::<u8>()
@@ -104,4 +133,7 @@ pub struct MouseEvent {
 #[derive(Debug, Clone)]
 pub struct KeyboardEvent {
     pub key_group1: u32,
+    pub key_group2: u32,
+    pub key_group3: u32,
+    pub key_group4: u32,
 }
