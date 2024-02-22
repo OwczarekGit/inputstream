@@ -37,6 +37,12 @@ impl EventHandler<KeyboardEvent> for KeyboardEventHandler {
         buttons.insert(Key::KEY_X);
         buttons.insert(Key::KEY_Y);
         buttons.insert(Key::KEY_Z);
+        buttons.insert(Key::KEY_BACKSLASH);
+        buttons.insert(Key::KEY_LEFTBRACE);
+        buttons.insert(Key::KEY_RIGHTBRACE);
+        buttons.insert(Key::KEY_PRINT);
+        buttons.insert(Key::KEY_SCROLLLOCK);
+        buttons.insert(Key::KEY_PAUSE);
 
         let mut device = VirtualDeviceBuilder::new()?
             .name(KEYBOARD_DEVICE_NAME)

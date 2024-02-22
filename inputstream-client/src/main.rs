@@ -104,6 +104,12 @@ pub fn main() {
                         Keycode::X => Some(23),
                         Keycode::Y => Some(24),
                         Keycode::Z => Some(25),
+                        Keycode::Backslash => Some(26),
+                        Keycode::LeftBracket => Some(27),
+                        Keycode::RightBracket => Some(28),
+                        Keycode::PrintScreen => Some(29),
+                        Keycode::ScrollLock => Some(30),
+                        Keycode::Pause => Some(31),
                         _ => None,
                     } {
                         button_group1 &= !(1 << bit);
@@ -141,6 +147,12 @@ pub fn main() {
                         Keycode::X => Some(23),
                         Keycode::Y => Some(24),
                         Keycode::Z => Some(25),
+                        Keycode::Backslash => Some(26),
+                        Keycode::LeftBracket => Some(27),
+                        Keycode::RightBracket => Some(28),
+                        Keycode::PrintScreen => Some(29),
+                        Keycode::ScrollLock => Some(30),
+                        Keycode::Pause => Some(31),
                         _ => None,
                     } {
                         button_group1 |= 1 << bit;

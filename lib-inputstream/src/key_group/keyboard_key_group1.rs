@@ -35,12 +35,12 @@ impl KeyboardKeyGroup1 {
             KeyState::new(23),
             KeyState::new(24),
             KeyState::new(25),
-            //KeyState::new(26),
-            //KeyState::new(27),
-            //KeyState::new(28),
-            //KeyState::new(29),
-            //KeyState::new(30),
-            //KeyState::new(31),
+            KeyState::new(26),
+            KeyState::new(27),
+            KeyState::new(28),
+            KeyState::new(29),
+            KeyState::new(30),
+            KeyState::new(31),
         ])
     }
 
@@ -116,6 +116,12 @@ impl From<KeyboardKeyGroup1> for Vec<(evdev::Key, bool)> {
                 23 => (Key::KEY_X, k.pressed()),
                 24 => (Key::KEY_Y, k.pressed()),
                 25 => (Key::KEY_Z, k.pressed()),
+                26 => (Key::KEY_BACKSLASH, k.pressed()),
+                27 => (Key::KEY_LEFTBRACE, k.pressed()),
+                28 => (Key::KEY_RIGHTBRACE, k.pressed()),
+                29 => (Key::KEY_PRINT, k.pressed()),
+                30 => (Key::KEY_SCROLLLOCK, k.pressed()),
+                31 => (Key::KEY_PAUSE, k.pressed()),
                 key => panic!("INVALID KEY: '{key}'"),
             })
             .collect::<Vec<_>>()
