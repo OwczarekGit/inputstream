@@ -37,9 +37,11 @@ pub fn main() {
     'running: loop {
         let prev_bg1 = button_group1;
         let prev_m_buttons = m_buttons;
+        let mut delta_wheel = 0f32;
         for event in event_pump.poll_iter() {
             match event {
                 Event::Quit { .. } => break 'running,
+                Event::MouseWheel { precise_y, .. } => delta_wheel = precise_y,
                 Event::KeyUp {
                     keycode: Some(keycode),
                     repeat: false,
@@ -145,9 +147,15 @@ pub fn main() {
                     .write(format!("{KEYBOARD_PROTOCOL_NAME}|{button_group1};0;0;0\n").as_bytes());
             }
 
-            if dx.abs() > 0.0 || dy.abs() > 0.0 || (prev_m_buttons != m_buttons) {
-                let _ = socket
-                    .write(format!("{MOUSE_PROTOCOL_NAME}|{dx};{dy};0;{m_buttons}\n").as_bytes());
+            if dx.abs() > 0.0
+                || dy.abs() > 0.0
+                || delta_wheel.abs() > 0.0
+                || (prev_m_buttons != m_buttons)
+            {
+                let _ = socket.write(
+                    format!("{MOUSE_PROTOCOL_NAME}|{dx};{dy};{delta_wheel};{m_buttons}\n")
+                        .as_bytes(),
+                );
             }
         }
         ::std::thread::sleep(Duration::new(0, 1_000_000_000u32 / 60));
