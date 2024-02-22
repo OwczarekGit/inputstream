@@ -4,7 +4,7 @@ use std::{
     thread,
 };
 
-use lib_inputstream::input_event::InputEvent;
+use lib_inputstream::input_event::{InputEvent, KeyboardEvent, MouseEvent, OsuEvent};
 
 use crate::{senders::Senders, Result};
 
@@ -64,6 +64,11 @@ fn listen(stream: TcpStream, senders: Senders) -> Result<()> {
         }
     }
     println!("Device {addr} disconnected.");
+
+    // Perform a cleanup (unpress all the keys).
+    let _ = senders.osu_channel.send(OsuEvent::default());
+    let _ = senders.keyboard_channel.send(KeyboardEvent::default());
+    let _ = senders.mouse_channel.send(MouseEvent::default());
 
     Ok(())
 }

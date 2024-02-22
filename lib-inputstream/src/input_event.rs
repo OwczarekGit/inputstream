@@ -114,13 +114,13 @@ impl FromStr for InputEvent {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Default)]
 pub struct OsuEvent {
     pub key1_state: bool,
     pub key2_state: bool,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Default)]
 pub struct MouseEvent {
     pub dx: f32,
     pub dy: f32,
@@ -130,7 +130,7 @@ pub struct MouseEvent {
     pub btn_middle_state: bool,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Default)]
 pub struct KeyboardEvent {
     pub key_group1: u32,
     pub key_group2: u32,
