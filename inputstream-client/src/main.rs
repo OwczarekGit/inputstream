@@ -86,13 +86,9 @@ pub fn main() {
                 } => {
                     if let Ok(bit) = KeyGroupBitmask::try_from(keycode) {
                         button_group1 &= !(1 << *bit);
-                    }
-
-                    if let Ok(bit) = KeyGroupBitmask::try_from(keycode) {
+                    } else if let Ok(bit) = KeyGroupBitmask::try_from(keycode) {
                         button_group2 &= !(1 << *bit);
-                    }
-
-                    if let Ok(bit) = KeyGroupBitmask::try_from(keycode) {
+                    } else if let Ok(bit) = KeyGroupBitmask::try_from(keycode) {
                         button_group3 &= !(1 << *bit);
                     }
                 }
@@ -103,13 +99,9 @@ pub fn main() {
                 } => {
                     if let Ok(bit) = KeyGroupBitmask::try_from(keycode) {
                         button_group1 |= 1 << *bit;
-                    }
-
-                    if let Ok(bit) = KeyGroupBitmask::try_from(keycode) {
+                    } else if let Ok(bit) = KeyGroupBitmask::try_from(keycode) {
                         button_group2 |= 1 << *bit;
-                    }
-
-                    if let Ok(bit) = KeyGroupBitmask::try_from(keycode) {
+                    } else if let Ok(bit) = KeyGroupBitmask::try_from(keycode) {
                         button_group3 |= 1 << *bit;
                     }
                 }
