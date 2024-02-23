@@ -1,10 +1,12 @@
+use std::net::Ipv4Addr;
+
 use clap::Parser;
 use lib_inputstream::consts::DEFAULT_PORT;
 
 #[derive(Debug, Parser)]
 pub struct Config {
     /// IP address of the server to connect to
-    pub address: String,
+    pub address: Ipv4Addr,
     #[arg(default_value_t = DEFAULT_PORT)]
     pub port: u16,
     /// Mouse acceleration

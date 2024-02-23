@@ -1,0 +1,28 @@
+use std::fmt::Display;
+
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+pub struct OsuEvent(pub u32);
+
+impl OsuEvent {
+    pub fn set_key_state(&mut self, button: impl Into<OsuKey>, state: bool) {
+        let bit = button.into() as u32;
+        if state {
+            self.0 |= bit;
+        } else {
+            self.0 &= !bit;
+        }
+    }
+}
+
+impl Display for OsuEvent {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.0)
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+#[repr(u32)]
+pub enum OsuKey {
+    Key1 = 1 << 0,
+    Key2 = 1 << 1,
+}
