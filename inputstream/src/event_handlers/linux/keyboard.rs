@@ -2,11 +2,7 @@ use crate::Result;
 use evdev::{uinput::VirtualDeviceBuilder, AttributeSet, EventType, InputEvent, Key};
 use lib_inputstream::{
     consts::KEYBOARD_DEVICE_NAME,
-    input_event::KeyboardEvent,
-    key_group::{
-        keyboard_key_group1::KeyboardKeyGroup1, keyboard_key_group2::KeyboardKeyGroup2,
-        keyboard_key_group3::KeyboardKeyGroup3,
-    },
+    event::{difference::Difference, keyboard::KeyboardEvent},
 };
 
 use crate::event_handlers::handler::{EventHandler, KeyboardEventHandler};
@@ -21,29 +17,18 @@ impl EventHandler<KeyboardEvent> for KeyboardEventHandler {
             .with_keys(&buttons)?
             .build()?;
 
-        let mut group1 = KeyboardKeyGroup1::new();
-        let mut group2 = KeyboardKeyGroup2::new();
-        let mut group3 = KeyboardKeyGroup3::new();
+        let mut keyboard_state = KeyboardEvent::default();
 
         loop {
             if let Ok(msg) = receiver.recv() {
                 let mut events = vec![];
-                group1.check_states(msg.key_group1);
-                group2.check_states(msg.key_group2);
-                group3.check_states(msg.key_group3);
 
-                for (key, pressed) in Vec::<(Key, bool)>::from(group1.clone()) {
-                    events.push(InputEvent::new(EventType::KEY, key.code(), pressed.into()));
+                for (state, key) in keyboard_state.get_diff(&msg) {
+                    let key: Key = key.into();
+                    events.push(InputEvent::new(EventType::KEY, key.code(), state.into()));
                 }
 
-                for (key, pressed) in Vec::<(Key, bool)>::from(group2.clone()) {
-                    events.push(InputEvent::new(EventType::KEY, key.code(), pressed.into()));
-                }
-
-                for (key, pressed) in Vec::<(Key, bool)>::from(group3.clone()) {
-                    events.push(InputEvent::new(EventType::KEY, key.code(), pressed.into()));
-                }
-
+                keyboard_state = msg;
                 let _ = device.emit(&events);
             }
         }

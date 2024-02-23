@@ -1,10 +1,13 @@
 use std::{
     io::{BufRead, BufReader},
     net::{TcpListener, TcpStream},
+    str::FromStr,
     thread,
 };
 
-use lib_inputstream::input_event::{InputEvent, KeyboardEvent, MouseEvent, OsuEvent};
+use lib_inputstream::event::{
+    keyboard::KeyboardEvent, mouse::MouseEvent, osu::OsuEvent, EventType,
+};
 
 use crate::{senders::Senders, Result};
 
@@ -47,19 +50,18 @@ fn listen(stream: TcpStream, senders: Senders) -> Result<()> {
                 break 'conn;
             }
 
-            match message_raw.parse::<InputEvent>() {
-                Ok(ev) => match ev {
-                    InputEvent::Osu(event) => {
-                        let _ = senders.osu_channel.send(event);
+            if let Ok(ev) = EventType::from_str(&message_raw) {
+                match ev {
+                    EventType::Osu(ev) => {
+                        let _ = senders.osu_channel.send(ev);
                     }
-                    InputEvent::Keyboard(event) => {
-                        let _ = senders.keyboard_channel.send(event);
+                    EventType::Mouse(ev) => {
+                        let _ = senders.mouse_channel.send(ev);
                     }
-                    InputEvent::Mouse(event) => {
-                        let _ = senders.mouse_channel.send(event);
+                    EventType::Keyboard(ev) => {
+                        let _ = senders.keyboard_channel.send(ev);
                     }
-                },
-                Err(err) => println!("{}", err),
+                }
             }
         }
     }

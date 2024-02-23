@@ -1,6 +1,6 @@
 use std::sync::mpsc::{channel, Receiver, Sender};
 
-use lib_inputstream::input_event::{KeyboardEvent, MouseEvent, OsuEvent};
+use lib_inputstream::event::{keyboard::KeyboardEvent, mouse::MouseEvent, osu::OsuEvent};
 
 use crate::senders::Senders;
 

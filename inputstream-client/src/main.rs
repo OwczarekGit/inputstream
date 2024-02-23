@@ -31,8 +31,8 @@ pub fn main() {
 
     let mut canvas = window.into_canvas().build().unwrap();
 
-    sdl_context.mouse().set_relative_mouse_mode(true);
-    sdl_context.mouse().show_cursor(true);
+    //sdl_context.mouse().set_relative_mouse_mode(true);
+    //sdl_context.mouse().show_cursor(true);
 
     canvas.set_draw_color(Color::RGB(0x44, 0x44, 0x44));
     canvas.clear();

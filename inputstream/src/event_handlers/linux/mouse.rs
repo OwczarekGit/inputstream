@@ -2,7 +2,10 @@ use crate::Result;
 use evdev::{
     uinput::VirtualDeviceBuilder, AttributeSet, EventType, InputEvent, Key, RelativeAxisType,
 };
-use lib_inputstream::{consts::MOUSE_DEVICE_NAME, input_event::MouseEvent};
+use lib_inputstream::{
+    consts::MOUSE_DEVICE_NAME,
+    event::mouse::{MouseButton, MouseEvent},
+};
 
 use crate::event_handlers::handler::{EventHandler, MouseEventHandler};
 
@@ -55,19 +58,19 @@ impl EventHandler<MouseEvent> for MouseEventHandler {
                 ev.push(InputEvent::new(
                     EventType::KEY,
                     Key::BTN_LEFT.code(),
-                    event.btn_left_state.into(),
+                    event.button_state(MouseButton::Left).into(),
                 ));
 
                 ev.push(InputEvent::new(
                     EventType::KEY,
                     Key::BTN_RIGHT.code(),
-                    event.btn_right_state.into(),
+                    event.button_state(MouseButton::Right).into(),
                 ));
 
                 ev.push(InputEvent::new(
                     EventType::KEY,
                     Key::BTN_MIDDLE.code(),
-                    event.btn_middle_state.into(),
+                    event.button_state(MouseButton::Middle).into(),
                 ));
 
                 let _ = device.emit(&ev);

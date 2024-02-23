@@ -1,6 +1,6 @@
 use std::sync::mpsc::Sender;
 
-use lib_inputstream::input_event::{KeyboardEvent, MouseEvent, OsuEvent};
+use lib_inputstream::event::{keyboard::KeyboardEvent, mouse::MouseEvent, osu::OsuEvent};
 
 #[derive(Debug, Clone)]
 pub struct Senders {

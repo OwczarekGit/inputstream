@@ -1,6 +1,9 @@
 use crate::Result;
 use evdev::{uinput::VirtualDeviceBuilder, AttributeSet, EventType, InputEvent, Key};
-use lib_inputstream::{consts::OSU_DEVICE_NAME, input_event::OsuEvent};
+use lib_inputstream::{
+    consts::OSU_DEVICE_NAME,
+    event::osu::{OsuEvent, OsuKey},
+};
 
 use crate::{
     config::config,
@@ -33,34 +36,34 @@ impl EventHandler<OsuEvent> for OsuEventHandler {
                 let mut ev = vec![];
 
                 if let Some(prev) = &prev_state {
-                    if prev.key1_state != msg.key1_state {
+                    if prev.key_state(OsuKey::Key1) != msg.key_state(OsuKey::Key1) {
                         ev.push(InputEvent::new(
                             EventType::KEY,
                             k1.code(),
-                            msg.key1_state.into(),
+                            msg.key_state(OsuKey::Key1).into(),
                         ));
                     }
                 } else {
                     ev.push(InputEvent::new(
                         EventType::KEY,
                         k1.code(),
-                        msg.key1_state.into(),
+                        msg.key_state(OsuKey::Key2).into(),
                     ));
                 }
 
                 if let Some(prev) = &prev_state {
-                    if prev.key2_state != msg.key2_state {
+                    if prev.key_state(OsuKey::Key2) != msg.key_state(OsuKey::Key2) {
                         ev.push(InputEvent::new(
                             EventType::KEY,
                             k2.code(),
-                            msg.key2_state.into(),
+                            msg.key_state(OsuKey::Key2).into(),
                         ));
                     }
                 } else {
                     ev.push(InputEvent::new(
                         EventType::KEY,
                         k2.code(),
-                        msg.key2_state.into(),
+                        msg.key_state(OsuKey::Key2).into(),
                     ));
                 }
 
