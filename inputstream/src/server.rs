@@ -61,6 +61,9 @@ fn listen(stream: TcpStream, senders: Senders) -> Result<()> {
                     EventType::Keyboard(ev) => {
                         let _ = senders.keyboard_channel.send(ev);
                     }
+                    EventType::Gamepad(ev) => {
+                        let _ = senders.gamepad_channel.send(ev);
+                    }
                 }
             }
         }

@@ -17,3 +17,4 @@ pub struct OsuEventHandler;
 
 pub struct MouseEventHandler;
 pub struct KeyboardEventHandler;
+pub struct GamepadEventHandler;
