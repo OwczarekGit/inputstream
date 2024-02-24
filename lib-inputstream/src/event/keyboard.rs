@@ -63,20 +63,20 @@ impl Difference for KeyboardEvent {
 
         // NOTE: This should be fine as long as there is a variant coresponding for each bitmask.
         for bit in 0..32u32 {
-            let bit = 1 << bit;
-            if bit & g1_diff == bit {
-                let key: Group1Event = unsafe { transmute(bit) };
-                let pressed = other.0 & bit == bit;
+            let mask = 1 << bit;
+            if mask & g1_diff == mask {
+                let key: Group1Event = unsafe { transmute(mask) };
+                let pressed = other.0 & mask == mask;
                 results.push((pressed, KeyboardEventGroup::G1(key)));
             }
-            if bit & g2_diff == bit {
-                let key: Group2Event = unsafe { transmute(bit) };
-                let pressed = other.1 & bit == bit;
+            if mask & g2_diff == mask {
+                let key: Group2Event = unsafe { transmute(mask) };
+                let pressed = other.1 & mask == mask;
                 results.push((pressed, KeyboardEventGroup::G2(key)));
             }
-            if bit & g3_diff == bit {
-                let key: Group3Event = unsafe { transmute(bit) };
-                let pressed = other.2 & bit == bit;
+            if mask & g3_diff == mask {
+                let key: Group3Event = unsafe { transmute(mask) };
+                let pressed = other.2 & mask == mask;
                 results.push((pressed, KeyboardEventGroup::G3(key)));
             }
         }

@@ -1,4 +1,11 @@
-use std::{fmt::Display, str::FromStr};
+use std::{
+    fmt::Display,
+    str::{FromStr, Split},
+};
+
+use evdev::Key;
+
+use super::difference::Difference;
 
 #[derive(Debug, Default, Clone, Copy, PartialEq, PartialOrd)]
 pub struct MouseEvent {
@@ -35,24 +42,21 @@ impl FromStr for MouseEvent {
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let mut split = s.split(';');
-        let dx: f32 = split
-            .next()
-            .ok_or("Missing delta X.")?
-            .trim()
-            .parse()
-            .unwrap_or(0.0);
-        let dy: f32 = split
-            .next()
-            .ok_or("Missing delta Y.")?
-            .trim()
-            .parse()
-            .unwrap_or(0.0);
-        let dw: f32 = split
-            .next()
-            .ok_or("Missing delta W.")?
-            .trim()
-            .parse()
-            .unwrap_or(0.0);
+
+        let next_float = |split: &mut Split<'_, _>, name: &str| {
+            Ok::<f32, String>(
+                split
+                    .next()
+                    .ok_or(format!("Missing {name}."))?
+                    .trim()
+                    .parse()
+                    .unwrap_or(0.0),
+            )
+        };
+
+        let dx = next_float(&mut split, "delta X")?;
+        let dy = next_float(&mut split, "delta Y")?;
+        let dw = next_float(&mut split, "delta W")?;
         let buttons: u32 = split.next().ok_or("Missing buttons.")?.parse().unwrap_or(0);
 
         Ok(Self {
@@ -64,10 +68,51 @@ impl FromStr for MouseEvent {
     }
 }
 
+impl Difference for MouseEvent {
+    type Output = (
+        Option<f32>,
+        Option<f32>,
+        Option<f32>,
+        Vec<(bool, MouseButton)>,
+    );
+
+    fn get_diff(&self, other: &Self) -> Self::Output {
+        let motion_diff = |val: f32| val.abs().gt(&0.0).then_some(val);
+
+        let add_button_change = |v: &mut Vec<(bool, MouseButton)>, btn: MouseButton| {
+            if (self.buttons & btn as u32) != (other.buttons & btn as u32) {
+                v.push((other.buttons & btn as u32 > 0, btn));
+            }
+        };
+
+        let dx = motion_diff(other.dx);
+        let dy = motion_diff(other.dy);
+        let dw = motion_diff(other.dw);
+        let mut buttons = vec![];
+
+        add_button_change(&mut buttons, MouseButton::Left);
+        add_button_change(&mut buttons, MouseButton::Right);
+        add_button_change(&mut buttons, MouseButton::Middle);
+
+        (dx, dy, dw, buttons)
+    }
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 #[repr(u32)]
 pub enum MouseButton {
     Left = 1 << 0,
     Right = 1 << 1,
     Middle = 1 << 2,
+}
+
+#[cfg(target_os = "linux")]
+impl From<MouseButton> for evdev::Key {
+    fn from(value: MouseButton) -> Self {
+        match value {
+            MouseButton::Left => Key::BTN_LEFT,
+            MouseButton::Right => Key::BTN_RIGHT,
+            MouseButton::Middle => Key::BTN_MIDDLE,
+        }
+    }
 }

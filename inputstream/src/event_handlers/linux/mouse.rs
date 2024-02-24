@@ -4,7 +4,7 @@ use evdev::{
 };
 use lib_inputstream::{
     consts::MOUSE_DEVICE_NAME,
-    event::mouse::{MouseButton, MouseEvent},
+    event::{difference::Difference, mouse::MouseEvent},
 };
 
 use crate::event_handlers::handler::{EventHandler, MouseEventHandler};
@@ -27,52 +27,47 @@ impl EventHandler<MouseEvent> for MouseEventHandler {
             .with_relative_axes(&motion)?
             .build()?;
 
+        let mut mouse_state = MouseEvent::default();
+
         loop {
             if let Ok(event) = receiver.recv() {
                 let mut ev = vec![];
 
-                if event.dx.abs() > 0f32 {
+                let (dx_diff, dy_diff, dw_diff, buttons_diff) = mouse_state.get_diff(&event);
+
+                if let Some(dx) = dx_diff {
                     ev.push(InputEvent::new(
                         EventType::RELATIVE,
                         RelativeAxisType::REL_X.0,
-                        event.dx as i32,
+                        dx as i32,
                     ));
                 }
 
-                if event.dy.abs() > 0f32 {
+                if let Some(dy) = dy_diff {
                     ev.push(InputEvent::new(
                         EventType::RELATIVE,
                         RelativeAxisType::REL_Y.0,
-                        event.dy as i32,
+                        dy as i32,
                     ));
                 }
 
-                if event.dw.abs() > 0f32 {
+                if let Some(dw) = dw_diff {
                     ev.push(InputEvent::new(
                         EventType::RELATIVE,
                         RelativeAxisType::REL_WHEEL.0,
-                        event.dw as i32,
+                        dw as i32,
                     ));
                 }
 
-                ev.push(InputEvent::new(
-                    EventType::KEY,
-                    Key::BTN_LEFT.code(),
-                    event.button_state(MouseButton::Left).into(),
-                ));
+                for (state, button) in buttons_diff {
+                    ev.push(InputEvent::new(
+                        EventType::KEY,
+                        Key::from(button).code(),
+                        state.into(),
+                    ));
+                }
 
-                ev.push(InputEvent::new(
-                    EventType::KEY,
-                    Key::BTN_RIGHT.code(),
-                    event.button_state(MouseButton::Right).into(),
-                ));
-
-                ev.push(InputEvent::new(
-                    EventType::KEY,
-                    Key::BTN_MIDDLE.code(),
-                    event.button_state(MouseButton::Middle).into(),
-                ));
-
+                mouse_state = event;
                 let _ = device.emit(&ev);
             }
         }

@@ -28,7 +28,7 @@ impl FromStr for EventType {
     type Err = String;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let mut split = s.trim().split("|");
+        let mut split = s.trim().split('|');
         let protocol = split.next().ok_or("Missing protocol.")?;
         let data = split.next().ok_or("Missing data.")?;
 
