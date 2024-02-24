@@ -61,7 +61,7 @@ impl Difference for KeyboardEvent {
         let g2_diff = self.1 ^ other.1;
         let g3_diff = self.2 ^ other.2;
 
-        // NOTE: This should be fine as long as there is a variant coresponding for each bitmask.
+        // NOTE: This should be fine as long as there is a variant corresponding to each bitmask.
         for bit in 0..32u32 {
             let mask = 1 << bit;
             if mask & g1_diff == mask {
