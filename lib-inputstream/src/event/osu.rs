@@ -1,5 +1,7 @@
 use std::{fmt::Display, str::FromStr};
 
+use super::difference::Difference;
+
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 pub struct OsuEvent(pub u32);
 
@@ -30,6 +32,21 @@ impl FromStr for OsuEvent {
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let keys: u32 = s.trim().parse().unwrap_or(0);
         Ok(Self(keys))
+    }
+}
+
+impl Difference for OsuEvent {
+    type Output = (Option<(bool, OsuKey)>, Option<(bool, OsuKey)>);
+
+    fn get_diff(&self, other: &Self) -> Self::Output {
+        (
+            (self.0 & OsuKey::Key1 as u32)
+                .ne(&(other.0 & OsuKey::Key1 as u32))
+                .then_some((other.0 & OsuKey::Key1 as u32 > 0, OsuKey::Key1)),
+            (self.0 & OsuKey::Key2 as u32)
+                .ne(&(other.0 & OsuKey::Key2 as u32))
+                .then_some((other.0 & OsuKey::Key2 as u32 > 0, OsuKey::Key2)),
+        )
     }
 }
 

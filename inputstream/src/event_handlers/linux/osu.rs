@@ -2,7 +2,7 @@ use crate::Result;
 use evdev::{uinput::VirtualDeviceBuilder, AttributeSet, EventType, InputEvent, Key};
 use lib_inputstream::{
     consts::OSU_DEVICE_NAME,
-    event::osu::{OsuEvent, OsuKey},
+    event::{difference::Difference, osu::OsuEvent},
 };
 
 use crate::{
@@ -29,45 +29,23 @@ impl EventHandler<OsuEvent> for OsuEventHandler {
             .with_keys(&keys)?
             .build()?;
 
-        let mut prev_state: Option<OsuEvent> = None;
+        let mut osu_state = OsuEvent::default();
 
         loop {
             if let Ok(msg) = receiver.recv() {
                 let mut ev = vec![];
 
-                if let Some(prev) = &prev_state {
-                    if prev.key_state(OsuKey::Key1) != msg.key_state(OsuKey::Key1) {
-                        ev.push(InputEvent::new(
-                            EventType::KEY,
-                            k1.code(),
-                            msg.key_state(OsuKey::Key1).into(),
-                        ));
-                    }
-                } else {
-                    ev.push(InputEvent::new(
-                        EventType::KEY,
-                        k1.code(),
-                        msg.key_state(OsuKey::Key2).into(),
-                    ));
+                let (k1_change, k2_change) = osu_state.get_diff(&msg);
+
+                if let Some((state, _key)) = k1_change {
+                    ev.push(InputEvent::new(EventType::KEY, k1.code(), state.into()));
                 }
 
-                if let Some(prev) = &prev_state {
-                    if prev.key_state(OsuKey::Key2) != msg.key_state(OsuKey::Key2) {
-                        ev.push(InputEvent::new(
-                            EventType::KEY,
-                            k2.code(),
-                            msg.key_state(OsuKey::Key2).into(),
-                        ));
-                    }
-                } else {
-                    ev.push(InputEvent::new(
-                        EventType::KEY,
-                        k2.code(),
-                        msg.key_state(OsuKey::Key2).into(),
-                    ));
+                if let Some((state, _key)) = k2_change {
+                    ev.push(InputEvent::new(EventType::KEY, k2.code(), state.into()));
                 }
 
-                prev_state = Some(msg);
+                osu_state = msg;
                 let _ = device.emit(&ev);
             }
         }
