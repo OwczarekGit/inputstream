@@ -115,7 +115,7 @@ impl Difference for GamepadEvent {
         add_button_change(&mut buttons, GamepadButton::Left);
         add_button_change(&mut buttons, GamepadButton::Right);
         add_button_change(&mut buttons, GamepadButton::Select);
-        add_button_change(&mut buttons, GamepadButton::Select);
+        add_button_change(&mut buttons, GamepadButton::Start);
         add_button_change(&mut buttons, GamepadButton::Mode);
         add_button_change(&mut buttons, GamepadButton::BumperLeft);
         add_button_change(&mut buttons, GamepadButton::BumperRight);

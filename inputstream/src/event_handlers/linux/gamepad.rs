@@ -94,7 +94,6 @@ fn create_device() -> crate::Result<VirtualDevice> {
     buttons.insert(Key::BTN_SELECT);
     buttons.insert(Key::BTN_START);
     buttons.insert(Key::BTN_MODE);
-    buttons.insert(Key::KEY_MUTE);
 
     buttons.insert(Key::BTN_THUMBL);
     buttons.insert(Key::BTN_THUMBR);
