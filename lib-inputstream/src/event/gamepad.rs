@@ -7,6 +7,7 @@ use super::difference::Difference;
 
 #[derive(Debug, Default, Clone, Copy, PartialEq, PartialOrd)]
 pub struct GamepadEvent {
+    pub gamepad_id: u32,
     pub left_stick: (f32, f32),
     pub right_stick: (f32, f32),
     pub triggers: (f32, f32),
@@ -28,7 +29,8 @@ impl Display for GamepadEvent {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(
             f,
-            "{};{};{};{};{};{};{}",
+            "{};{};{};{};{};{};{};{}",
+            self.gamepad_id,
             self.left_stick.0,
             self.left_stick.1,
             self.right_stick.0,
@@ -57,6 +59,13 @@ impl FromStr for GamepadEvent {
             )
         };
 
+        let gamepad_id: u32 = split
+            .next()
+            .ok_or("Missing gamepad id".to_string())?
+            .trim()
+            .parse()
+            .map_err(|_| "Invalid gamepad id")?;
+
         let left_stick = (
             next_float(&mut split, "left stick x")?,
             next_float(&mut split, "left stick y")?,
@@ -79,6 +88,7 @@ impl FromStr for GamepadEvent {
             .unwrap_or(0);
 
         Ok(Self {
+            gamepad_id,
             left_stick,
             right_stick,
             triggers,
