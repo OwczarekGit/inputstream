@@ -12,8 +12,9 @@ use lib_inputstream::{
         osu::{OsuEvent, OsuKey},
         EventType,
     },
+    utils::map_value_to_new_range,
 };
-use sdl2::{event::Event, keyboard::Keycode, pixels::Color};
+use sdl2::{controller::Axis, event::Event, keyboard::Keycode, pixels::Color};
 
 pub fn main() {
     let config = Config::parse();
@@ -93,6 +94,51 @@ pub fn main() {
         for event in event_pump.poll_iter() {
             match event {
                 Event::Quit { .. } => break 'running,
+
+                // Gamepad
+                // Triggers
+                Event::ControllerAxisMotion {
+                    axis: Axis::TriggerLeft,
+                    value,
+                    ..
+                } => {
+                    gamepad_state.triggers.0 =
+                        map_value_to_new_range(value as f32, 0.0, 32767.0, 0.0, 255.0);
+                }
+                Event::ControllerAxisMotion {
+                    axis: Axis::TriggerRight,
+                    value,
+                    ..
+                } => {
+                    gamepad_state.triggers.1 =
+                        map_value_to_new_range(value as f32, 0.0, 32767.0, 0.0, 255.0);
+                }
+
+                // Left stick
+                Event::ControllerAxisMotion {
+                    axis: Axis::LeftX,
+                    value,
+                    ..
+                } => gamepad_state.left_stick.0 = value as f32,
+                Event::ControllerAxisMotion {
+                    axis: Axis::LeftY,
+                    value,
+                    ..
+                } => gamepad_state.left_stick.1 = value as f32,
+
+                // Right stick
+                Event::ControllerAxisMotion {
+                    axis: Axis::RightX,
+                    value,
+                    ..
+                } => gamepad_state.right_stick.0 = value as f32,
+                Event::ControllerAxisMotion {
+                    axis: Axis::RightY,
+                    value,
+                    ..
+                } => gamepad_state.right_stick.1 = value as f32,
+
+                // Buttons
                 Event::ControllerButtonDown { button, .. } => {
                     if let Ok(ev) = GamepadButton::try_from(button) {
                         gamepad_state.set_button_state(ev, true);
@@ -103,6 +149,8 @@ pub fn main() {
                         gamepad_state.set_button_state(ev, false);
                     }
                 }
+
+                // Keyboard
                 Event::KeyDown {
                     keycode: Some(Keycode::Z),
                     repeat: false,
@@ -131,6 +179,8 @@ pub fn main() {
                 } => {
                     osu_state.set_key_state(OsuKey::Key2, false);
                 }
+
+                // Mouse
                 Event::MouseWheel { precise_y, .. } => delta_wheel = precise_y,
                 Event::KeyUp {
                     keycode: Some(keycode),
