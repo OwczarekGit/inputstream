@@ -161,6 +161,8 @@ pub enum GamepadButton {
     StickRight = 1 << 14,
 }
 
+//  NOTE: Some more modern gamepad would be nice, but this works for now.
+//
 /// This maps XBOX 360 Controller.
 /// Theese are different for different controllers.
 /// For many you will need to use HAT absolute events for DPAD
