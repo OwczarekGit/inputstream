@@ -6,7 +6,7 @@ use std::{
 };
 
 use lib_inputstream::event::{
-    keyboard::KeyboardEvent, mouse::MouseEvent, osu::OsuEvent, EventType,
+    gamepad::GamepadEvent, keyboard::KeyboardEvent, mouse::MouseEvent, osu::OsuEvent, EventType,
 };
 
 use crate::{senders::Senders, Result};
@@ -74,6 +74,7 @@ fn listen(stream: TcpStream, senders: Senders) -> Result<()> {
     let _ = senders.osu_channel.send(OsuEvent::default());
     let _ = senders.keyboard_channel.send(KeyboardEvent::default());
     let _ = senders.mouse_channel.send(MouseEvent::default());
+    let _ = senders.gamepad_channel.send(GamepadEvent::default());
 
     Ok(())
 }

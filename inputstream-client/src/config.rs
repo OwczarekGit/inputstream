@@ -19,4 +19,10 @@ pub struct Config {
     /// Ignore super/windows key
     #[arg(long, default_value_t = false)]
     pub ignore_super: bool,
+    /// Disable mouse grabbing
+    #[arg(long = "nograb", default_value_t = false)]
+    pub disable_mouse: bool,
+    /// Disable gamepad capture
+    #[arg(long = "nojoy", default_value_t = false)]
+    pub disable_gamepad: bool,
 }

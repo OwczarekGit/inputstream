@@ -6,6 +6,7 @@ use config::Config;
 use lib_inputstream::{
     client::Client,
     event::{
+        gamepad::{GamepadButton, GamepadEvent},
         keyboard::{KeyboardEvent, KeyboardEventGroup},
         mouse::{MouseButton, MouseEvent},
         osu::{OsuEvent, OsuKey},
@@ -19,9 +20,45 @@ pub fn main() {
 
     let mut client = Client::new(config.address, config.port);
 
-    let sdl_context = sdl2::init().unwrap();
+    let ctx = sdl2::init().unwrap();
 
-    let video_subsystem = sdl_context.video().unwrap();
+    // When GameController instance falls off the stack the gamepad stops working
+    // so we hold it as an Option
+    let _controller = if !config.disable_gamepad {
+        let game_controller_subsystem = ctx.game_controller().unwrap();
+
+        let available = game_controller_subsystem
+            .num_joysticks()
+            .map_err(|e| dbg!(e))
+            .unwrap();
+
+        let controller = (0..available)
+            .find_map(|id| {
+                if !game_controller_subsystem.is_game_controller(id) {
+                    return None;
+                }
+
+                match game_controller_subsystem.open(id) {
+                    Ok(c) => {
+                        // We managed to find and open a game controller,
+                        // exit the loop
+                        // println!("Success: opened \"{}\"", c.name());
+                        Some(c)
+                    }
+                    Err(e) => {
+                        println!("failed: {:?}", e);
+                        None
+                    }
+                }
+            })
+            .expect("Couldn't open any controller");
+
+        Some(controller)
+    } else {
+        None
+    };
+
+    let video_subsystem = ctx.video().unwrap();
 
     let window = video_subsystem
         .window("InputStream SDL2 client", 400, 300)
@@ -31,8 +68,10 @@ pub fn main() {
 
     let mut canvas = window.into_canvas().build().unwrap();
 
-    sdl_context.mouse().set_relative_mouse_mode(true);
-    sdl_context.mouse().show_cursor(true);
+    if !config.disable_mouse {
+        ctx.mouse().set_relative_mouse_mode(true);
+        ctx.mouse().show_cursor(true);
+    }
 
     canvas.set_draw_color(Color::RGB(0x44, 0x44, 0x44));
     canvas.clear();
@@ -41,17 +80,29 @@ pub fn main() {
     let mut keyboard_state = KeyboardEvent::default();
     let mut mouse_state = MouseEvent::default();
     let mut osu_state = OsuEvent::default();
+    let mut gamepad_state = GamepadEvent::default();
 
-    let mut event_pump = sdl_context.event_pump().unwrap();
+    let mut event_pump = ctx.event_pump().unwrap();
     'running: loop {
         let prev_keyboard_state = keyboard_state;
         let prev_mouse_state = mouse_state;
         let prev_osu_state = osu_state;
+        let prev_gamepad_state = gamepad_state;
 
         let mut delta_wheel = 0f32;
         for event in event_pump.poll_iter() {
             match event {
                 Event::Quit { .. } => break 'running,
+                Event::ControllerButtonDown { button, .. } => {
+                    if let Ok(ev) = GamepadButton::try_from(button) {
+                        gamepad_state.set_button_state(ev, true);
+                    }
+                }
+                Event::ControllerButtonUp { button, .. } => {
+                    if let Ok(ev) = GamepadButton::try_from(button) {
+                        gamepad_state.set_button_state(ev, false);
+                    }
+                }
                 Event::KeyDown {
                     keycode: Some(Keycode::Z),
                     repeat: false,
@@ -118,12 +169,16 @@ pub fn main() {
                 let _ = client.send_event(EventType::Keyboard(keyboard_state));
             }
 
-            if prev_mouse_state != mouse_state {
+            if prev_mouse_state != mouse_state && !config.disable_mouse {
                 let _ = client.send_event(EventType::Mouse(mouse_state));
             }
 
             if prev_osu_state != osu_state {
                 let _ = client.send_event(EventType::Osu(osu_state));
+            }
+
+            if prev_gamepad_state != gamepad_state && !config.disable_gamepad {
+                let _ = client.send_event(EventType::Gamepad(gamepad_state));
             }
         }
         thread::sleep(Duration::from_millis(config.rate));

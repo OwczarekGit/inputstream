@@ -13,6 +13,17 @@ pub struct GamepadEvent {
     pub buttons: u32,
 }
 
+impl GamepadEvent {
+    pub fn set_button_state(&mut self, button: impl Into<GamepadButton>, state: bool) {
+        let bit = button.into() as u32;
+        if state {
+            self.buttons |= bit;
+        } else {
+            self.buttons &= !bit;
+        }
+    }
+}
+
 impl Display for GamepadEvent {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(
@@ -174,6 +185,32 @@ impl From<GamepadButton> for evdev::Key {
             GamepadButton::Right => Key::BTN_TRIGGER_HAPPY2,
             GamepadButton::Up => Key::BTN_TRIGGER_HAPPY3,
             GamepadButton::Left => Key::BTN_TRIGGER_HAPPY1,
+        }
+    }
+}
+
+#[cfg(feature = "sdl2")]
+impl TryFrom<sdl2::controller::Button> for GamepadButton {
+    type Error = ();
+
+    fn try_from(value: sdl2::controller::Button) -> Result<Self, Self::Error> {
+        match value {
+            sdl2::controller::Button::A => Ok(GamepadButton::A),
+            sdl2::controller::Button::B => Ok(GamepadButton::B),
+            sdl2::controller::Button::X => Ok(GamepadButton::X),
+            sdl2::controller::Button::Y => Ok(GamepadButton::Y),
+            sdl2::controller::Button::Guide => Ok(GamepadButton::Mode),
+            sdl2::controller::Button::Start => Ok(GamepadButton::Start),
+            sdl2::controller::Button::LeftStick => Ok(GamepadButton::StickLeft),
+            sdl2::controller::Button::RightStick => Ok(GamepadButton::StickRight),
+            sdl2::controller::Button::LeftShoulder => Ok(GamepadButton::BumperLeft),
+            sdl2::controller::Button::RightShoulder => Ok(GamepadButton::BumperRight),
+            sdl2::controller::Button::DPadUp => Ok(GamepadButton::Up),
+            sdl2::controller::Button::DPadDown => Ok(GamepadButton::Down),
+            sdl2::controller::Button::DPadLeft => Ok(GamepadButton::Left),
+            sdl2::controller::Button::DPadRight => Ok(GamepadButton::Right),
+            sdl2::controller::Button::Back => Ok(GamepadButton::Select),
+            _ => Err(()),
         }
     }
 }
