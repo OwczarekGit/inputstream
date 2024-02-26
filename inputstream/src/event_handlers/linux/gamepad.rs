@@ -64,11 +64,43 @@ impl EventHandler<GamepadEvent> for GamepadEventHandler {
                 }
 
                 for (state, btn) in buttons {
-                    ev.push(InputEvent::new(
-                        EventType::KEY,
-                        Key::from(btn).code(),
-                        state.into(),
-                    ));
+                    match btn {
+                        GamepadButton::Down => {
+                            ev.push(InputEvent::new(
+                                EventType::ABSOLUTE,
+                                AbsoluteAxisType::ABS_HAT0Y.0,
+                                if state { 1 } else { 0 },
+                            ));
+                        }
+                        GamepadButton::Up => {
+                            ev.push(InputEvent::new(
+                                EventType::ABSOLUTE,
+                                AbsoluteAxisType::ABS_HAT0Y.0,
+                                if state { -1 } else { 0 },
+                            ));
+                        }
+                        GamepadButton::Left => {
+                            ev.push(InputEvent::new(
+                                EventType::ABSOLUTE,
+                                AbsoluteAxisType::ABS_HAT0X.0,
+                                if state { -1 } else { 0 },
+                            ));
+                        }
+                        GamepadButton::Right => {
+                            ev.push(InputEvent::new(
+                                EventType::ABSOLUTE,
+                                AbsoluteAxisType::ABS_HAT0X.0,
+                                if state { 1 } else { 0 },
+                            ));
+                        }
+                        other => {
+                            ev.push(InputEvent::new(
+                                EventType::KEY,
+                                Key::from(other).code(),
+                                state.into(),
+                            ));
+                        }
+                    }
                 }
 
                 gamepad_state = msg;
@@ -78,6 +110,8 @@ impl EventHandler<GamepadEvent> for GamepadEventHandler {
     }
 }
 
+// NOTE: Maybe we could have multiple different controllers?
+//       This one maps to Dualsense.
 fn create_device() -> crate::Result<VirtualDevice> {
     let mut buttons = AttributeSet::new();
     buttons.insert(Key::BTN_NORTH);
@@ -87,6 +121,12 @@ fn create_device() -> crate::Result<VirtualDevice> {
     buttons.insert(Key::BTN_TL);
     buttons.insert(Key::BTN_TR);
 
+    // Not sure why but Dualsense has theese.
+    // Don't really seem to be used anywhere.
+    // Maybe some accessory.
+    buttons.insert(Key::BTN_TL2);
+    buttons.insert(Key::BTN_TR2);
+
     buttons.insert(Key::BTN_SELECT);
     buttons.insert(Key::BTN_START);
     buttons.insert(Key::BTN_MODE);
@@ -94,23 +134,17 @@ fn create_device() -> crate::Result<VirtualDevice> {
     buttons.insert(Key::BTN_THUMBL);
     buttons.insert(Key::BTN_THUMBR);
 
-    buttons.insert(Key::BTN_TRIGGER_HAPPY1);
-    buttons.insert(Key::BTN_TRIGGER_HAPPY2);
-    buttons.insert(Key::BTN_TRIGGER_HAPPY3);
-    buttons.insert(Key::BTN_TRIGGER_HAPPY4);
+    const MIN: i32 = 0;
+    const MAX: i32 = 255;
 
-    const MIN: i32 = -32768;
-    const MAX: i32 = 32767;
-    const FUZZ: i32 = 16;
-    const FLAT: i32 = 128;
+    // Minimal changes to fire event
+    const FUZZ: i32 = 1;
+
+    // Deadzone
+    const FLAT: i32 = 1;
     const RES: i32 = 1;
 
-    const Z_MIN: i32 = 0;
-    const Z_MAX: i32 = 255;
-    const Z_RES: i32 = 1;
-    const Z_FUZZ: i32 = 1;
-    const Z_FLAT: i32 = 1;
-
+    // Left stick
     let x_axis = UinputAbsSetup::new(
         AbsoluteAxisType::ABS_X,
         AbsInfo::new(0, MIN, MAX, FUZZ, FLAT, RES),
@@ -120,6 +154,7 @@ fn create_device() -> crate::Result<VirtualDevice> {
         AbsInfo::new(0, MIN, MAX, FUZZ, FLAT, RES),
     );
 
+    // Right stick
     let rx_axis = UinputAbsSetup::new(
         AbsoluteAxisType::ABS_RX,
         AbsInfo::new(0, MIN, MAX, FUZZ, FLAT, RES),
@@ -129,21 +164,25 @@ fn create_device() -> crate::Result<VirtualDevice> {
         AbsInfo::new(0, MIN, MAX, FUZZ, FLAT, RES),
     );
 
+    // Triggers
     let z_axis = UinputAbsSetup::new(
         AbsoluteAxisType::ABS_Z,
-        AbsInfo::new(0, Z_MIN, Z_MAX, Z_FUZZ, Z_FLAT, Z_RES),
+        AbsInfo::new(0, MIN, MAX, FUZZ, FLAT, RES),
     );
     let rz_axis = UinputAbsSetup::new(
         AbsoluteAxisType::ABS_RZ,
-        AbsInfo::new(0, Z_MIN, Z_MAX, Z_FUZZ, Z_FLAT, Z_RES),
+        AbsInfo::new(0, MIN, MAX, FUZZ, FLAT, RES),
     );
 
-    let hat_x = UinputAbsSetup::new(AbsoluteAxisType::ABS_HAT0X, AbsInfo::new(0, -1, 1, 1, 1, 1));
-    let hat_y = UinputAbsSetup::new(AbsoluteAxisType::ABS_HAT0Y, AbsInfo::new(0, -1, 1, 1, 1, 1));
+    // Dpad
+    let hat_x = UinputAbsSetup::new(AbsoluteAxisType::ABS_HAT0X, AbsInfo::new(0, -1, 1, 0, 0, 1));
+    let hat_y = UinputAbsSetup::new(AbsoluteAxisType::ABS_HAT0Y, AbsInfo::new(0, -1, 1, 0, 0, 1));
 
+    // NOTE: Some programs don't like virtual devices,
+    //       so we just pretend it's using USB.
     Ok(VirtualDeviceBuilder::new()?
         .name(GAMEPAD_DEVICE_NAME)
-        .input_id(InputId::new(BusType::BUS_USB, 0x45E, 0x2A1, 0x100))
+        .input_id(InputId::new(BusType::BUS_USB, 0x54C, 0xCE6, 0x8111))
         .with_keys(&buttons)?
         .with_absolute_axis(&hat_x)?
         .with_absolute_axis(&hat_y)?

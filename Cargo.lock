@@ -162,7 +162,7 @@ checksum = "95505c38b4572b2d910cecb0281560f54b440a19336cbbcb27bf6ce6adc6f5a8"
 
 [[package]]
 name = "inputstream"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "clap",
  "evdev",
@@ -171,7 +171,7 @@ dependencies = [
 
 [[package]]
 name = "inputstream-client"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "clap",
  "lib-inputstream",
@@ -186,7 +186,7 @@ checksum = "e2abad23fbc42b3700f2f279844dc832adb2b2eb069b2df918f455c4e18cc646"
 
 [[package]]
 name = "lib-inputstream"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "evdev",
  "sdl2",

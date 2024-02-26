@@ -5,7 +5,10 @@ use std::{
 
 use super::difference::Difference;
 
-#[derive(Debug, Default, Clone, Copy, PartialEq, PartialOrd)]
+// NOTE: We target Dualsense controller, so probably
+//       could use u8 for sticks and triggers since
+//       thats what it uses.
+#[derive(Debug, Clone, Copy, PartialEq, PartialOrd)]
 pub struct GamepadEvent {
     pub gamepad_id: u32,
     pub left_stick: (f32, f32),
@@ -21,6 +24,18 @@ impl GamepadEvent {
             self.buttons |= bit;
         } else {
             self.buttons &= !bit;
+        }
+    }
+}
+
+impl Default for GamepadEvent {
+    fn default() -> Self {
+        Self {
+            left_stick: (127.0, 127.0),
+            right_stick: (127.0, 127.0),
+            buttons: 0,
+            gamepad_id: 0,
+            triggers: (0.0, 0.0),
         }
     }
 }
@@ -116,10 +131,10 @@ impl Difference for GamepadEvent {
 
         let mut buttons = vec![];
 
-        add_button_change(&mut buttons, GamepadButton::A);
-        add_button_change(&mut buttons, GamepadButton::B);
-        add_button_change(&mut buttons, GamepadButton::Y);
         add_button_change(&mut buttons, GamepadButton::X);
+        add_button_change(&mut buttons, GamepadButton::Circle);
+        add_button_change(&mut buttons, GamepadButton::Triangle);
+        add_button_change(&mut buttons, GamepadButton::Square);
         add_button_change(&mut buttons, GamepadButton::Down);
         add_button_change(&mut buttons, GamepadButton::Up);
         add_button_change(&mut buttons, GamepadButton::Left);
@@ -151,13 +166,18 @@ impl Difference for GamepadEvent {
     }
 }
 
+/// NOTE: Dualsense also has touchpad and microphone mute buttons.
+///       Touchpad seems to be its own separate device on real hardware,
+///       but we maybe could add it here.
+///       Microphone mute is a weird one. It does not seem to be
+///       showing in any of the devices in `evtest`.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 #[repr(u32)]
 pub enum GamepadButton {
-    A = 1 << 0,
-    B = 1 << 1,
-    Y = 1 << 2,
-    X = 1 << 3,
+    X = 1 << 0,
+    Circle = 1 << 1,
+    Triangle = 1 << 2,
+    Square = 1 << 3,
     Down = 1 << 4,
     Right = 1 << 5,
     Up = 1 << 6,
@@ -171,21 +191,20 @@ pub enum GamepadButton {
     StickRight = 1 << 14,
 }
 
-//  NOTE: Some more modern gamepad would be nice, but this works for now.
-//
-/// This maps XBOX 360 Controller.
 /// Theese are different for different controllers.
-/// For many you will need to use HAT absolute events for DPAD
-/// X360 also sends TRIGGER_HAPPY key events for DPAD.
+/// X360 sends TRIGGER_HAPPY and HAT events for DPAD.
+/// Dualsense only sends HAT.
+/// We will just map them like that, and handle
+/// accordingly on the service side.
 #[cfg(target_os = "linux")]
 impl From<GamepadButton> for evdev::Key {
     fn from(value: GamepadButton) -> Self {
         use evdev::Key;
         match value {
-            GamepadButton::A => Key::BTN_SOUTH,
-            GamepadButton::B => Key::BTN_EAST,
-            GamepadButton::Y => Key::BTN_WEST,
-            GamepadButton::X => Key::BTN_NORTH,
+            GamepadButton::X => Key::BTN_SOUTH,
+            GamepadButton::Circle => Key::BTN_EAST,
+            GamepadButton::Triangle => Key::BTN_NORTH,
+            GamepadButton::Square => Key::BTN_WEST,
             GamepadButton::Start => Key::BTN_START,
             GamepadButton::Select => Key::BTN_SELECT,
             GamepadButton::Mode => Key::BTN_MODE,
@@ -207,10 +226,10 @@ impl TryFrom<sdl2::controller::Button> for GamepadButton {
 
     fn try_from(value: sdl2::controller::Button) -> Result<Self, Self::Error> {
         match value {
-            sdl2::controller::Button::A => Ok(GamepadButton::A),
-            sdl2::controller::Button::B => Ok(GamepadButton::B),
-            sdl2::controller::Button::X => Ok(GamepadButton::X),
-            sdl2::controller::Button::Y => Ok(GamepadButton::Y),
+            sdl2::controller::Button::A => Ok(GamepadButton::X),
+            sdl2::controller::Button::B => Ok(GamepadButton::Circle),
+            sdl2::controller::Button::X => Ok(GamepadButton::Square),
+            sdl2::controller::Button::Y => Ok(GamepadButton::Triangle),
             sdl2::controller::Button::Guide => Ok(GamepadButton::Mode),
             sdl2::controller::Button::Start => Ok(GamepadButton::Start),
             sdl2::controller::Button::LeftStick => Ok(GamepadButton::StickLeft),

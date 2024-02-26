@@ -3,7 +3,9 @@ use std::net::Ipv4Addr;
 use clap::Parser;
 use lib_inputstream::consts::DEFAULT_PORT;
 
+/// Simple client for inputstream using SDL2
 #[derive(Debug, Parser)]
+#[command(version, about, long_about = None)]
 pub struct Config {
     /// IP address of the server to connect to
     pub address: Ipv4Addr,
