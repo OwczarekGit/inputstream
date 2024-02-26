@@ -1,12 +1,12 @@
-use crate::consts::{
-    GAMEPAD_PROTOCOL_NAME, KEYBOARD_PROTOCOL_NAME, MOUSE_PROTOCOL_NAME, OSU_PROTOCOL_NAME,
-};
 use std::{fmt::Display, str::FromStr};
+
+use self::protocol::Protocol;
 
 pub mod gamepad;
 pub mod keyboard;
 pub mod mouse;
 pub mod osu;
+pub mod protocol;
 
 pub mod difference;
 
@@ -21,10 +21,10 @@ pub enum EventType {
 impl Display for EventType {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            EventType::Osu(ev) => writeln!(f, "{OSU_PROTOCOL_NAME}|{ev}"),
-            EventType::Mouse(ev) => writeln!(f, "{MOUSE_PROTOCOL_NAME}|{ev}"),
-            EventType::Keyboard(ev) => writeln!(f, "{KEYBOARD_PROTOCOL_NAME}|{ev}"),
-            EventType::Gamepad(ev) => writeln!(f, "{GAMEPAD_PROTOCOL_NAME}|{ev}"),
+            EventType::Osu(ev) => writeln!(f, "{}|{ev}", Protocol::Osu),
+            EventType::Mouse(ev) => writeln!(f, "{}|{ev}", Protocol::Mouse),
+            EventType::Keyboard(ev) => writeln!(f, "{}|{ev}", Protocol::Keyboard),
+            EventType::Gamepad(ev) => writeln!(f, "{}|{ev}", Protocol::Gamepad),
         }
     }
 }
@@ -34,15 +34,14 @@ impl FromStr for EventType {
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let mut split = s.trim().split('|');
-        let protocol = split.next().ok_or("Missing protocol.")?;
-        let data = split.next().ok_or("Missing data.")?;
+        let protocol = split.next().ok_or("Missing protocol.")?.trim();
+        let data = split.next().ok_or("Missing data.")?.trim();
 
-        match protocol {
-            OSU_PROTOCOL_NAME => Ok(Self::Osu(data.parse()?)),
-            MOUSE_PROTOCOL_NAME => Ok(Self::Mouse(data.parse()?)),
-            KEYBOARD_PROTOCOL_NAME => Ok(Self::Keyboard(data.parse()?)),
-            GAMEPAD_PROTOCOL_NAME => Ok(Self::Gamepad(data.parse()?)),
-            other => Err(other.to_owned()),
+        match protocol.parse()? {
+            Protocol::Osu => Ok(EventType::Osu(data.parse()?)),
+            Protocol::Mouse => Ok(EventType::Mouse(data.parse()?)),
+            Protocol::Keyboard => Ok(EventType::Keyboard(data.parse()?)),
+            Protocol::Gamepad => Ok(EventType::Gamepad(data.parse()?)),
         }
     }
 }

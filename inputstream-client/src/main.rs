@@ -3,17 +3,9 @@ mod config;
 
 use clap::Parser;
 use config::Config;
-use lib_inputstream::{
-    client::Client,
-    event::{
-        gamepad::{GamepadButton, GamepadEvent},
-        keyboard::{KeyboardEvent, KeyboardEventGroup},
-        mouse::{MouseButton, MouseEvent},
-        osu::{OsuEvent, OsuKey},
-        EventType,
-    },
-    utils::map_value_to_new_range,
-};
+use lib_inputstream::prelude::*;
+use lib_inputstream::utils::map_value_to_new_range;
+
 use sdl2::{controller::Axis, event::Event, keyboard::Keycode, pixels::Color};
 
 pub fn main() {
@@ -33,28 +25,24 @@ pub fn main() {
             .map_err(|e| dbg!(e))
             .unwrap();
 
-        let controller = (0..available)
-            .find_map(|id| {
-                if !game_controller_subsystem.is_game_controller(id) {
-                    return None;
-                }
+        (0..available).find_map(|id| {
+            if !game_controller_subsystem.is_game_controller(id) {
+                return None;
+            }
 
-                match game_controller_subsystem.open(id) {
-                    Ok(c) => {
-                        // We managed to find and open a game controller,
-                        // exit the loop
-                        // println!("Success: opened \"{}\"", c.name());
-                        Some(c)
-                    }
-                    Err(e) => {
-                        println!("failed: {:?}", e);
-                        None
-                    }
+            match game_controller_subsystem.open(id) {
+                Ok(c) => {
+                    // We managed to find and open a game controller,
+                    // exit the loop
+                    // println!("Success: opened \"{}\"", c.name());
+                    Some(c)
                 }
-            })
-            .expect("Couldn't open any controller");
-
-        Some(controller)
+                Err(e) => {
+                    println!("failed: {:?}", e);
+                    None
+                }
+            }
+        })
     } else {
         None
     };

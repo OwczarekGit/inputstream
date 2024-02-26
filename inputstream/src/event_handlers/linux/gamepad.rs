@@ -1,14 +1,10 @@
+use crate::event_handlers::handler::{EventHandler, GamepadEventHandler};
 use evdev::{
     uinput::{VirtualDevice, VirtualDeviceBuilder},
     AbsInfo, AbsoluteAxisType, AttributeSet, BusType, EventType, InputEvent, InputId, Key,
     UinputAbsSetup,
 };
-use lib_inputstream::{
-    consts::GAMEPAD_DEVICE_NAME,
-    event::{difference::Difference, gamepad::GamepadEvent},
-};
-
-use crate::event_handlers::handler::{EventHandler, GamepadEventHandler};
+use lib_inputstream::{consts::GAMEPAD_DEVICE_NAME, prelude::*};
 
 impl EventHandler<GamepadEvent> for GamepadEventHandler {
     fn listen(&self, receiver: std::sync::mpsc::Receiver<GamepadEvent>) -> crate::Result<()> {

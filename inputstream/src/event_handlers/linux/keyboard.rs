@@ -1,9 +1,6 @@
 use crate::Result;
 use evdev::{uinput::VirtualDeviceBuilder, AttributeSet, EventType, InputEvent, Key};
-use lib_inputstream::{
-    consts::KEYBOARD_DEVICE_NAME,
-    event::{difference::Difference, keyboard::KeyboardEvent},
-};
+use lib_inputstream::{consts::KEYBOARD_DEVICE_NAME, prelude::*};
 
 use crate::event_handlers::handler::{EventHandler, KeyboardEventHandler};
 

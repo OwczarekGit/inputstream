@@ -5,9 +5,7 @@ use std::{
     thread,
 };
 
-use lib_inputstream::event::{
-    gamepad::GamepadEvent, keyboard::KeyboardEvent, mouse::MouseEvent, osu::OsuEvent, EventType,
-};
+use lib_inputstream::prelude::*;
 
 use crate::{senders::Senders, Result};
 

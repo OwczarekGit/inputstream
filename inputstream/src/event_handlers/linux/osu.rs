@@ -1,9 +1,6 @@
 use crate::Result;
 use evdev::{uinput::VirtualDeviceBuilder, AttributeSet, EventType, InputEvent, Key};
-use lib_inputstream::{
-    consts::OSU_DEVICE_NAME,
-    event::{difference::Difference, osu::OsuEvent},
-};
+use lib_inputstream::{consts::OSU_DEVICE_NAME, prelude::*};
 
 use crate::{
     config::config,

@@ -1,10 +1,7 @@
 use std::sync::mpsc::{channel, Receiver, Sender};
 
-use lib_inputstream::event::{
-    gamepad::GamepadEvent, keyboard::KeyboardEvent, mouse::MouseEvent, osu::OsuEvent,
-};
-
 use crate::senders::Senders;
+use lib_inputstream::prelude::*;
 
 fn create_channel<T>() -> (Sender<T>, Receiver<T>) {
     channel()

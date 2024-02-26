@@ -2,10 +2,7 @@ use crate::Result;
 use evdev::{
     uinput::VirtualDeviceBuilder, AttributeSet, EventType, InputEvent, Key, RelativeAxisType,
 };
-use lib_inputstream::{
-    consts::MOUSE_DEVICE_NAME,
-    event::{difference::Difference, mouse::MouseEvent},
-};
+use lib_inputstream::{consts::MOUSE_DEVICE_NAME, prelude::*};
 
 use crate::event_handlers::handler::{EventHandler, MouseEventHandler};
 
