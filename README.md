@@ -12,5 +12,5 @@ Client-Server architecture.
 - Efficient - works great over ethernet and wifi
 - Low latency - you can even play osu!
 
-No need to replug USB cables, use dongles or constantly pair Bluetooth decvices.
+No need to replug USB cables, use dongles or constantly pair Bluetooth devices.
 Just pass them over the network.
