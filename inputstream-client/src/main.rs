@@ -4,8 +4,7 @@ mod config;
 use clap::Parser;
 use config::Config;
 use lib_inputstream::{
-    prelude::*,
-    utils::{sdl2_to_dualsense_sticks, sdl2_to_dualsense_triggers},
+    event::gamepad::absolute_axis::AbsolutAxis, prelude::*, utils::sdl2_to_dualsense_triggers,
 };
 
 use sdl2::{controller::Axis, event::Event, keyboard::Keycode, pixels::Color};
@@ -71,7 +70,7 @@ pub fn main() {
     let mut keyboard_state = KeyboardEvent::default();
     let mut mouse_state = MouseEvent::default();
     let mut osu_state = OsuEvent::default();
-    let mut gamepad_state = GamepadEvent::default();
+    let mut gamepad_state = GamepadState::default();
 
     let mut event_pump = ctx.event_pump().unwrap();
     'running: loop {
@@ -91,36 +90,36 @@ pub fn main() {
                     axis: Axis::TriggerLeft,
                     value,
                     ..
-                } => gamepad_state.triggers.0 = sdl2_to_dualsense_triggers(value as f32),
+                } => gamepad_state.triggers.0 = sdl2_to_dualsense_triggers(value),
                 Event::ControllerAxisMotion {
                     axis: Axis::TriggerRight,
                     value,
                     ..
-                } => gamepad_state.triggers.1 = sdl2_to_dualsense_triggers(value as f32),
+                } => gamepad_state.triggers.1 = sdl2_to_dualsense_triggers(value),
 
                 // Left stick
                 Event::ControllerAxisMotion {
                     axis: Axis::LeftX,
                     value,
                     ..
-                } => gamepad_state.left_stick.0 = sdl2_to_dualsense_sticks(value as f32),
+                } => gamepad_state.left_stick.0 = *AbsolutAxis::from_sdl2_value_stick(value),
                 Event::ControllerAxisMotion {
                     axis: Axis::LeftY,
                     value,
                     ..
-                } => gamepad_state.left_stick.1 = sdl2_to_dualsense_sticks(value as f32),
+                } => gamepad_state.left_stick.1 = *AbsolutAxis::from_sdl2_value_stick(value),
 
                 // Right stick
                 Event::ControllerAxisMotion {
                     axis: Axis::RightX,
                     value,
                     ..
-                } => gamepad_state.right_stick.0 = sdl2_to_dualsense_sticks(value as f32),
+                } => gamepad_state.right_stick.0 = *AbsolutAxis::from_sdl2_value_stick(value),
                 Event::ControllerAxisMotion {
                     axis: Axis::RightY,
                     value,
                     ..
-                } => gamepad_state.right_stick.1 = sdl2_to_dualsense_sticks(value as f32),
+                } => gamepad_state.right_stick.1 = *AbsolutAxis::from_sdl2_value_stick(value),
 
                 // Buttons
                 Event::ControllerButtonDown { button, .. } => {

@@ -1,6 +1,6 @@
 use std::{fmt::Display, str::FromStr};
 
-use self::protocol::Protocol;
+use self::{gamepad::gamepad_state::GamepadState, protocol::Protocol};
 
 pub mod gamepad;
 pub mod keyboard;
@@ -15,7 +15,7 @@ pub enum EventType {
     Osu(osu::OsuEvent),
     Mouse(mouse::MouseEvent),
     Keyboard(keyboard::KeyboardEvent),
-    Gamepad(gamepad::GamepadEvent),
+    Gamepad(GamepadState),
 }
 
 impl Display for EventType {

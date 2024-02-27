@@ -72,7 +72,7 @@ fn listen(stream: TcpStream, senders: Senders) -> Result<()> {
     let _ = senders.osu_channel.send(OsuEvent::default());
     let _ = senders.keyboard_channel.send(KeyboardEvent::default());
     let _ = senders.mouse_channel.send(MouseEvent::default());
-    let _ = senders.gamepad_channel.send(GamepadEvent::default());
+    let _ = senders.gamepad_channel.send(GamepadState::default());
 
     Ok(())
 }

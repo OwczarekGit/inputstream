@@ -12,12 +12,12 @@ pub fn create_channels() -> (
     Receiver<OsuEvent>,
     Receiver<KeyboardEvent>,
     Receiver<MouseEvent>,
-    Receiver<GamepadEvent>,
+    Receiver<GamepadState>,
 ) {
     let osu_channel = create_channel::<OsuEvent>();
     let keyboard_channel = create_channel::<KeyboardEvent>();
     let mouse_channel = create_channel::<MouseEvent>();
-    let gamepad_channel = create_channel::<GamepadEvent>();
+    let gamepad_channel = create_channel::<GamepadState>();
 
     (
         Senders {

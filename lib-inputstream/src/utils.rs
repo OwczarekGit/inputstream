@@ -18,8 +18,8 @@ pub fn map_to_dualsense_range(value: f32, min: f32, max: f32) -> f32 {
 
 #[cfg(feature = "sdl2")]
 #[inline]
-pub fn sdl2_to_dualsense_triggers(value: f32) -> f32 {
-    (value * 255.0 / 32767.0).round()
+pub fn sdl2_to_dualsense_triggers(value: i16) -> u8 {
+    (value as f32 * 255.0 / 32767.0).round() as u8
 }
 
 #[cfg(feature = "sdl2")]

@@ -6,15 +6,17 @@ use evdev::{
 };
 use lib_inputstream::{consts::GAMEPAD_DEVICE_NAME, prelude::*};
 
-impl EventHandler<GamepadEvent> for GamepadEventHandler {
-    fn listen(&self, receiver: std::sync::mpsc::Receiver<GamepadEvent>) -> crate::Result<()> {
+impl EventHandler<GamepadState> for GamepadEventHandler {
+    fn listen(&self, receiver: std::sync::mpsc::Receiver<GamepadState>) -> crate::Result<()> {
         let mut device = create_device()?;
 
-        let mut gamepad_state = GamepadEvent::default();
+        let mut gamepad_state = GamepadState::default();
 
         loop {
             if let Ok(msg) = receiver.recv() {
                 let mut ev = vec![];
+
+                let to_dualsense_range = |v: i8| (v as u8) + 128u8;
 
                 let (l_stick, r_stick, triggers, buttons) = gamepad_state.get_diff(&msg);
 
@@ -22,14 +24,14 @@ impl EventHandler<GamepadEvent> for GamepadEventHandler {
                     ev.push(InputEvent::new(
                         EventType::ABSOLUTE,
                         AbsoluteAxisType::ABS_X.0,
-                        x as i32,
+                        to_dualsense_range(x) as i32,
                     ));
                 }
                 if let Some(y) = l_stick.1 {
                     ev.push(InputEvent::new(
                         EventType::ABSOLUTE,
                         AbsoluteAxisType::ABS_Y.0,
-                        y as i32,
+                        to_dualsense_range(y) as i32,
                     ));
                 }
 
@@ -37,14 +39,14 @@ impl EventHandler<GamepadEvent> for GamepadEventHandler {
                     ev.push(InputEvent::new(
                         EventType::ABSOLUTE,
                         AbsoluteAxisType::ABS_RX.0,
-                        x as i32,
+                        to_dualsense_range(x) as i32,
                     ));
                 }
                 if let Some(y) = r_stick.1 {
                     ev.push(InputEvent::new(
                         EventType::ABSOLUTE,
                         AbsoluteAxisType::ABS_RY.0,
-                        y as i32,
+                        to_dualsense_range(y) as i32,
                     ));
                 }
 
