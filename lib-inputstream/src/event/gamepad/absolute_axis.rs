@@ -3,9 +3,9 @@ use std::ops::Deref;
 use crate::utils::map_value_to_new_range;
 
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
-pub struct AbsolutAxis(pub i8);
+pub struct AbsoluteAxis(pub i8);
 
-impl AbsolutAxis {
+impl AbsoluteAxis {
     pub fn from_normalized(val: impl Into<f32>) -> Self {
         let val: f32 = val.into();
         let val = match val {
@@ -19,7 +19,7 @@ impl AbsolutAxis {
 }
 
 #[cfg(feature = "sdl2")]
-impl AbsolutAxis {
+impl AbsoluteAxis {
     pub fn from_sdl2_value_stick(val: i16) -> Self {
         Self(crate::utils::map_value_to_new_range(
             val as f32,
@@ -31,7 +31,7 @@ impl AbsolutAxis {
     }
 }
 
-impl Deref for AbsolutAxis {
+impl Deref for AbsoluteAxis {
     type Target = i8;
 
     fn deref(&self) -> &Self::Target {
@@ -44,9 +44,9 @@ mod test {
     use super::*;
     #[test]
     fn maps_correctly_from_float() {
-        let max = AbsolutAxis::from_normalized(1.0);
-        let min = AbsolutAxis::from_normalized(-1.0);
-        let zero = AbsolutAxis::from_normalized(0.0);
+        let max = AbsoluteAxis::from_normalized(1.0);
+        let min = AbsoluteAxis::from_normalized(-1.0);
+        let zero = AbsoluteAxis::from_normalized(0.0);
 
         assert_eq!(*max, 127);
         assert_eq!(*min, -128);
