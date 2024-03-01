@@ -3,8 +3,6 @@ use std::{
     str::{FromStr, Split},
 };
 
-use evdev::Key;
-
 use super::difference::Difference;
 
 #[derive(Debug, Default, Clone, Copy, PartialEq, PartialOrd)]
@@ -109,6 +107,7 @@ pub enum MouseButton {
 #[cfg(target_os = "linux")]
 impl From<MouseButton> for evdev::Key {
     fn from(value: MouseButton) -> Self {
+        use evdev::Key;
         match value {
             MouseButton::Left => Key::BTN_LEFT,
             MouseButton::Right => Key::BTN_RIGHT,
