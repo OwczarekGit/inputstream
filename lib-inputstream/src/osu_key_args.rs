@@ -79,3 +79,67 @@ impl TryFrom<OsuKey> for evdev::Key {
         }
     }
 }
+
+#[cfg(target_os = "windows")]
+impl TryFrom<OsuKey> for winapi::ctypes::c_int {
+    type Error = String;
+    fn try_from(v: OsuKey) -> Result<Self, Self::Error> {
+        use winapi::um::winuser::*;
+        match v.0.as_str() {
+            // Row numbers
+            "1" => Ok(0x31),
+            "2" => Ok(0x32),
+            "3" => Ok(0x33),
+            "4" => Ok(0x34),
+            "5" => Ok(0x35),
+            "6" => Ok(0x36),
+            "7" => Ok(0x37),
+            "8" => Ok(0x38),
+            "9" => Ok(0x39),
+            "0" => Ok(0x30),
+            "-" => Ok(VK_OEM_MINUS),
+            "=" => Ok(VK_OEM_PLUS),
+
+            // Row 1
+            "q" => Ok(0x51),
+            "w" => Ok(0x57),
+            "e" => Ok(0x45),
+            "r" => Ok(0x52),
+            "t" => Ok(0x54),
+            "y" => Ok(0x59),
+            "u" => Ok(0x55),
+            "i" => Ok(0x49),
+            "o" => Ok(0x4F),
+            "p" => Ok(0x50),
+            "[" => Ok(VK_OEM_4),
+            "]" => Ok(VK_OEM_6),
+
+            // Row 2
+            "a" => Ok(0x41),
+            "s" => Ok(0x53),
+            "d" => Ok(0x44),
+            "f" => Ok(0x46),
+            "g" => Ok(0x47),
+            "h" => Ok(0x48),
+            "j" => Ok(0x4A),
+            "k" => Ok(0x4B),
+            "l" => Ok(0x4C),
+            ";" | "semicol" => Ok(VK_OEM_1),
+            "'" => Ok(VK_OEM_7),
+            "\\" | "backslash" => Ok(VK_OEM_5),
+
+            // Row 3
+            "z" => Ok(0x5A),
+            "x" => Ok(0x58),
+            "c" => Ok(0x43),
+            "v" => Ok(0x56),
+            "b" => Ok(0x42),
+            "n" => Ok(0x4E),
+            "m" => Ok(0x4D),
+            "," | "comma" => Ok(VK_OEM_COMMA),
+            "." | "dot" => Ok(VK_OEM_PERIOD),
+            "/" | "slash" => Ok(VK_OEM_2),
+            _ => Err("Unknown token".to_string()),
+        }
+    }
+}
