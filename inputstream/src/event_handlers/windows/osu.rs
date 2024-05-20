@@ -1,4 +1,4 @@
-use lib_inputstream::event::osu::OsuEvent;
+use lib_inputstream::event::osu::OsuState;
 use std::mem::{size_of, zeroed};
 use winapi::um::winuser::{SendInput, INPUT, INPUT_KEYBOARD, KEYBDINPUT, KEYEVENTF_KEYUP};
 
@@ -9,8 +9,8 @@ use crate::{
 use lib_inputstream::prelude::Difference;
 use winapi::ctypes::c_int;
 
-impl EventHandler<OsuEvent> for OsuEventHandler {
-    fn listen(&self, receiver: std::sync::mpsc::Receiver<OsuEvent>) -> crate::Result<()> {
+impl EventHandler<OsuState> for OsuEventHandler {
+    fn listen(&self, receiver: std::sync::mpsc::Receiver<OsuState>) -> crate::Result<()> {
         let (k1, k2) = {
             let config = config().clone();
             (
@@ -19,7 +19,7 @@ impl EventHandler<OsuEvent> for OsuEventHandler {
             )
         };
 
-        let mut osu_state = OsuEvent::default();
+        let mut osu_state = OsuState::default();
 
         loop {
             if let Ok(msg) = receiver.recv() {

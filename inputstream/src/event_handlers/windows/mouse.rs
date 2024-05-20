@@ -10,9 +10,9 @@ use winapi::um::winuser::{
 use crate::event_handlers::handler::{EventHandler, MouseEventHandler};
 
 // NOTE: This probably will need a refactor.
-impl EventHandler<MouseEvent> for MouseEventHandler {
-    fn listen(&self, receiver: std::sync::mpsc::Receiver<MouseEvent>) -> crate::Result<()> {
-        let mut mouse_state = MouseEvent::default();
+impl EventHandler<MouseState> for MouseEventHandler {
+    fn listen(&self, receiver: std::sync::mpsc::Receiver<MouseState>) -> crate::Result<()> {
+        let mut mouse_state = MouseState::default();
         loop {
             if let Ok(msg) = receiver.recv() {
                 let (dx, dy, dw, buttons) = mouse_state.get_diff(&msg);
