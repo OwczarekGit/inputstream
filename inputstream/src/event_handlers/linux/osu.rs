@@ -7,8 +7,8 @@ use crate::{
     event_handlers::handler::{EventHandler, OsuEventHandler},
 };
 
-impl EventHandler<OsuEvent> for OsuEventHandler {
-    fn listen(&self, receiver: std::sync::mpsc::Receiver<OsuEvent>) -> Result<()> {
+impl EventHandler<OsuState> for OsuEventHandler {
+    fn listen(&self, receiver: std::sync::mpsc::Receiver<OsuState>) -> Result<()> {
         let (k1, k2) = {
             let config = config().clone();
             (
@@ -26,7 +26,7 @@ impl EventHandler<OsuEvent> for OsuEventHandler {
             .with_keys(&keys)?
             .build()?;
 
-        let mut osu_state = OsuEvent::default();
+        let mut osu_state = OsuState::default();
 
         loop {
             if let Ok(msg) = receiver.recv() {

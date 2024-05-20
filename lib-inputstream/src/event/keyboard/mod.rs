@@ -11,9 +11,9 @@ pub mod named;
 use super::{difference::Difference, EventType};
 
 #[derive(Debug, Default, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
-pub struct KeyboardEvent(pub u32, pub u32, pub u32, pub u32);
+pub struct KeyboardState(pub u32, pub u32, pub u32, pub u32);
 
-impl KeyboardEvent {
+impl KeyboardState {
     pub fn update(&mut self, ev: impl Into<KeyboardEventGroup>, state: bool) {
         let ev = ev.into();
         match ev {
@@ -49,25 +49,25 @@ impl KeyboardEvent {
     }
 }
 
-impl From<KeyboardEvent> for EventType {
-    fn from(value: KeyboardEvent) -> Self {
+impl From<KeyboardState> for EventType {
+    fn from(value: KeyboardState) -> Self {
         Self::Keyboard(value)
     }
 }
 
-impl Display for KeyboardEvent {
+impl Display for KeyboardState {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{};{};{};{}", self.0, self.1, self.2, self.3,)
     }
 }
 
-impl From<(u32, u32, u32, u32)> for KeyboardEvent {
+impl From<(u32, u32, u32, u32)> for KeyboardState {
     fn from(v: (u32, u32, u32, u32)) -> Self {
         Self(v.0, v.1, v.2, v.3)
     }
 }
 
-impl Difference for KeyboardEvent {
+impl Difference for KeyboardState {
     type Output = Vec<(bool, KeyboardEventGroup)>;
     fn get_diff(&self, other: &Self) -> Self::Output {
         let mut results = vec![];
@@ -99,7 +99,7 @@ impl Difference for KeyboardEvent {
     }
 }
 
-impl FromStr for KeyboardEvent {
+impl FromStr for KeyboardState {
     type Err = String;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {

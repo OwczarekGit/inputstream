@@ -9,14 +9,14 @@ fn create_channel<T>() -> (Sender<T>, Receiver<T>) {
 
 pub fn create_channels() -> (
     Senders,
-    Receiver<OsuEvent>,
-    Receiver<KeyboardEvent>,
-    Receiver<MouseEvent>,
+    Receiver<OsuState>,
+    Receiver<KeyboardState>,
+    Receiver<MouseState>,
     Receiver<GamepadState>,
 ) {
-    let osu_channel = create_channel::<OsuEvent>();
-    let keyboard_channel = create_channel::<KeyboardEvent>();
-    let mouse_channel = create_channel::<MouseEvent>();
+    let osu_channel = create_channel::<OsuState>();
+    let keyboard_channel = create_channel::<KeyboardState>();
+    let mouse_channel = create_channel::<MouseState>();
     let gamepad_channel = create_channel::<GamepadState>();
 
     (

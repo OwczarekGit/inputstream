@@ -9,14 +9,14 @@ mod linux;
 use super::{difference::Difference, EventType};
 
 #[derive(Debug, Default, Clone, Copy, PartialEq, PartialOrd)]
-pub struct MouseEvent {
+pub struct MouseState {
     pub dx: f32,
     pub dy: f32,
     pub dw: f32,
     pub buttons: u32,
 }
 
-impl MouseEvent {
+impl MouseState {
     pub fn set_button_state(&mut self, button: impl Into<MouseButton>, state: bool) {
         let bit = button.into() as u32;
         if state {
@@ -32,19 +32,19 @@ impl MouseEvent {
     }
 }
 
-impl From<MouseEvent> for EventType {
-    fn from(value: MouseEvent) -> Self {
+impl From<MouseState> for EventType {
+    fn from(value: MouseState) -> Self {
         Self::Mouse(value)
     }
 }
 
-impl Display for MouseEvent {
+impl Display for MouseState {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{};{};{};{}", self.dx, self.dy, self.dw, self.buttons)
     }
 }
 
-impl FromStr for MouseEvent {
+impl FromStr for MouseState {
     type Err = String;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
@@ -75,7 +75,7 @@ impl FromStr for MouseEvent {
     }
 }
 
-impl Difference for MouseEvent {
+impl Difference for MouseState {
     type Output = (
         Option<f32>,
         Option<f32>,

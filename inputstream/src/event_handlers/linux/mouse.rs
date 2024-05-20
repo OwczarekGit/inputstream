@@ -6,8 +6,8 @@ use lib_inputstream::{consts::MOUSE_DEVICE_NAME, prelude::*};
 
 use crate::event_handlers::handler::{EventHandler, MouseEventHandler};
 
-impl EventHandler<MouseEvent> for MouseEventHandler {
-    fn listen(&self, receiver: std::sync::mpsc::Receiver<MouseEvent>) -> Result<()> {
+impl EventHandler<MouseState> for MouseEventHandler {
+    fn listen(&self, receiver: std::sync::mpsc::Receiver<MouseState>) -> Result<()> {
         let mut buttons = AttributeSet::<Key>::new();
         buttons.insert(Key::BTN_LEFT);
         buttons.insert(Key::BTN_RIGHT);
@@ -24,7 +24,7 @@ impl EventHandler<MouseEvent> for MouseEventHandler {
             .with_relative_axes(&motion)?
             .build()?;
 
-        let mut mouse_state = MouseEvent::default();
+        let mut mouse_state = MouseState::default();
 
         loop {
             if let Ok(event) = receiver.recv() {

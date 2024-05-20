@@ -12,9 +12,9 @@ pub mod difference;
 
 #[derive(Debug, Clone, Copy, PartialEq, PartialOrd)]
 pub enum EventType {
-    Osu(osu::OsuEvent),
-    Mouse(mouse::MouseEvent),
-    Keyboard(keyboard::KeyboardEvent),
+    Osu(osu::OsuState),
+    Mouse(mouse::MouseState),
+    Keyboard(keyboard::KeyboardState),
     Gamepad(GamepadState),
 }
 

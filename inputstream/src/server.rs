@@ -69,9 +69,9 @@ fn listen(stream: TcpStream, senders: Senders) -> Result<()> {
     println!("Device {addr} disconnected.");
 
     // Perform a cleanup (unpress all the keys).
-    let _ = senders.osu_channel.send(OsuEvent::default());
-    let _ = senders.keyboard_channel.send(KeyboardEvent::default());
-    let _ = senders.mouse_channel.send(MouseEvent::default());
+    let _ = senders.osu_channel.send(OsuState::default());
+    let _ = senders.keyboard_channel.send(KeyboardState::default());
+    let _ = senders.mouse_channel.send(MouseState::default());
     let _ = senders.gamepad_channel.send(GamepadState::default());
 
     Ok(())

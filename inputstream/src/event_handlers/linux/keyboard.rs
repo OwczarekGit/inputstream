@@ -4,8 +4,8 @@ use lib_inputstream::{consts::KEYBOARD_DEVICE_NAME, prelude::*};
 
 use crate::event_handlers::handler::{EventHandler, KeyboardEventHandler};
 
-impl EventHandler<KeyboardEvent> for KeyboardEventHandler {
-    fn listen(&self, receiver: std::sync::mpsc::Receiver<KeyboardEvent>) -> Result<()> {
+impl EventHandler<KeyboardState> for KeyboardEventHandler {
+    fn listen(&self, receiver: std::sync::mpsc::Receiver<KeyboardState>) -> Result<()> {
         let mut buttons = AttributeSet::<Key>::new();
         add_buttons(&mut buttons);
 
@@ -14,7 +14,7 @@ impl EventHandler<KeyboardEvent> for KeyboardEventHandler {
             .with_keys(&buttons)?
             .build()?;
 
-        let mut keyboard_state = KeyboardEvent::default();
+        let mut keyboard_state = KeyboardState::default();
 
         loop {
             if let Ok(msg) = receiver.recv() {

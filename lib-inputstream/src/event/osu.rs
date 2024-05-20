@@ -3,9 +3,9 @@ use std::{fmt::Display, str::FromStr};
 use super::{difference::Difference, EventType};
 
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
-pub struct OsuEvent(pub u32);
+pub struct OsuState(pub u32);
 
-impl OsuEvent {
+impl OsuState {
     pub fn set_key_state(&mut self, button: impl Into<OsuKey>, state: bool) {
         let bit = button.into() as u32;
         if state {
@@ -20,19 +20,19 @@ impl OsuEvent {
     }
 }
 
-impl From<OsuEvent> for EventType {
-    fn from(value: OsuEvent) -> Self {
+impl From<OsuState> for EventType {
+    fn from(value: OsuState) -> Self {
         Self::Osu(value)
     }
 }
 
-impl Display for OsuEvent {
+impl Display for OsuState {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{}", self.0)
     }
 }
 
-impl FromStr for OsuEvent {
+impl FromStr for OsuState {
     type Err = String;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
@@ -41,7 +41,7 @@ impl FromStr for OsuEvent {
     }
 }
 
-impl Difference for OsuEvent {
+impl Difference for OsuState {
     type Output = (Option<(bool, OsuKey)>, Option<(bool, OsuKey)>);
 
     fn get_diff(&self, other: &Self) -> Self::Output {

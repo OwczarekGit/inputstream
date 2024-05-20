@@ -67,9 +67,9 @@ pub fn main() {
     canvas.clear();
     canvas.present();
 
-    let mut keyboard_state = KeyboardEvent::default();
-    let mut mouse_state = MouseEvent::default();
-    let mut osu_state = OsuEvent::default();
+    let mut keyboard_state = KeyboardState::default();
+    let mut mouse_state = MouseState::default();
+    let mut osu_state = OsuState::default();
     let mut gamepad_state = GamepadState::default();
 
     let mut event_pump = ctx.event_pump().unwrap();
