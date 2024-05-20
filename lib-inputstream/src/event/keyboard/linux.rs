@@ -1,4 +1,4 @@
-use super::{Group1Event, Group2Event, Group3Event, Group4Event, KeyboardEventGroup};
+use super::{Group1Event, Group2Event, Group3Event, KeyboardEventGroup};
 
 impl From<Group1Event> for evdev::Key {
     fn from(value: Group1Event) -> Self {
@@ -69,7 +69,7 @@ impl From<Group2Event> for evdev::Key {
             Group2Event::Space => Key::KEY_SPACE,
             Group2Event::RightAlt => Key::KEY_RIGHTALT,
             Group2Event::ContextMenu => Key::KEY_CONTEXT_MENU,
-            Group2Event::Rightctrl => Key::KEY_RIGHTCTRL,
+            Group2Event::RightCtrl => Key::KEY_RIGHTCTRL,
             Group2Event::RightShift => Key::KEY_RIGHTSHIFT,
             Group2Event::Comma => Key::KEY_COMMA,
             Group2Event::Dot => Key::KEY_DOT,

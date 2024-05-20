@@ -91,9 +91,9 @@ checksum = "baf1de4339761588bc0619e3cbc0120ee582ebb74b53b4efbf79117bd2da40fd"
 
 [[package]]
 name = "clap"
-version = "4.5.3"
+version = "4.5.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "949626d00e063efc93b6dca932419ceb5432f99769911c0b995f7e884c778813"
+checksum = "90bc066a67923782aa8515dbaea16946c5bcc5addbd668bb80af688e53e548a0"
 dependencies = [
  "clap_builder",
  "clap_derive",
@@ -113,9 +113,9 @@ dependencies = [
 
 [[package]]
 name = "clap_derive"
-version = "4.5.3"
+version = "4.5.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "90239a040c80f5e14809ca132ddc4176ab33d5e17e49691793296e3fcb34d72f"
+checksum = "528131438037fd55894f62d6e9f068b8f45ac57ffa77517819645d10aed04f64"
 dependencies = [
  "heck",
  "proc-macro2",
@@ -137,9 +137,9 @@ checksum = "acbf1af155f9b9ef647e42cdc158db4b64a1b61f743629225fde6f3e0be2a7c7"
 
 [[package]]
 name = "evdev"
-version = "0.12.1"
+version = "0.12.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2bed59fcc8cfd6b190814a509018388462d3b203cf6dd10db5c00087e72a83f3"
+checksum = "ab6055a93a963297befb0f4f6e18f314aec9767a4bbe88b151126df2433610a7"
 dependencies = [
  "bitvec",
  "cfg-if",
@@ -162,7 +162,7 @@ checksum = "2304e00983f87ffb38b55b444b5e3b60a884b5d30c0fca7d82fe33449bbe55ea"
 
 [[package]]
 name = "inputstream"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "clap",
  "evdev",
@@ -172,7 +172,7 @@ dependencies = [
 
 [[package]]
 name = "inputstream-client"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "clap",
  "lib-inputstream",
@@ -187,7 +187,7 @@ checksum = "e2abad23fbc42b3700f2f279844dc832adb2b2eb069b2df918f455c4e18cc646"
 
 [[package]]
 name = "lib-inputstream"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "evdev",
  "sdl2",

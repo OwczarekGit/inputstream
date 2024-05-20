@@ -6,7 +6,9 @@ mod linux;
 #[cfg(feature = "sdl2")]
 mod sdl2;
 
-use super::difference::Difference;
+pub mod named;
+
+use super::{difference::Difference, EventType};
 
 #[derive(Debug, Default, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub struct KeyboardEvent(pub u32, pub u32, pub u32, pub u32);
@@ -44,6 +46,12 @@ impl KeyboardEvent {
                 }
             }
         }
+    }
+}
+
+impl From<KeyboardEvent> for EventType {
+    fn from(value: KeyboardEvent) -> Self {
+        Self::Keyboard(value)
     }
 }
 
@@ -202,7 +210,7 @@ pub enum Group2Event {
     Space = 1 << 22,
     RightAlt = 1 << 23,
     ContextMenu = 1 << 24,
-    Rightctrl = 1 << 25,
+    RightCtrl = 1 << 25,
     RightShift = 1 << 26,
     Comma = 1 << 27,
     Dot = 1 << 28,

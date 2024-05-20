@@ -18,7 +18,7 @@ impl Client {
         })
     }
 
-    pub fn send_event(&mut self, event: EventType) -> Result<usize, std::io::Error> {
-        self.stream.write(event.to_string().as_bytes())
+    pub fn send_event(&mut self, event: impl Into<EventType>) -> Result<usize, std::io::Error> {
+        self.stream.write(event.into().to_string().as_bytes())
     }
 }

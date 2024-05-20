@@ -1,6 +1,6 @@
 use std::{fmt::Display, str::FromStr};
 
-use super::difference::Difference;
+use super::{difference::Difference, EventType};
 
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 pub struct OsuEvent(pub u32);
@@ -17,6 +17,12 @@ impl OsuEvent {
 
     pub fn key_state(&self, key: impl Into<OsuKey>) -> bool {
         self.0 & key.into() as u32 > 0
+    }
+}
+
+impl From<OsuEvent> for EventType {
+    fn from(value: OsuEvent) -> Self {
+        Self::Osu(value)
     }
 }
 

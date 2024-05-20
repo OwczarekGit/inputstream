@@ -1,4 +1,4 @@
-use crate::event::keyboard::{Group1Event, Group2Event, Group3Event, Group4Event};
+use crate::event::keyboard::{Group1Event, Group2Event, Group3Event};
 
 use super::KeyboardEventGroup;
 

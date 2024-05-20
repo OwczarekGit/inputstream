@@ -199,19 +199,19 @@ pub fn main() {
 
         if let Ok(client) = &mut client {
             if prev_keyboard_state != keyboard_state {
-                let _ = client.send_event(EventType::Keyboard(keyboard_state));
+                let _ = client.send_event(keyboard_state);
             }
 
             if prev_mouse_state != mouse_state && !config.disable_mouse {
-                let _ = client.send_event(EventType::Mouse(mouse_state));
+                let _ = client.send_event(mouse_state);
             }
 
             if prev_osu_state != osu_state {
-                let _ = client.send_event(EventType::Osu(osu_state));
+                let _ = client.send_event(osu_state);
             }
 
             if prev_gamepad_state != gamepad_state && !config.disable_gamepad {
-                let _ = client.send_event(EventType::Gamepad(gamepad_state));
+                let _ = client.send_event(gamepad_state);
             }
         }
         thread::sleep(Duration::from_millis(config.rate));

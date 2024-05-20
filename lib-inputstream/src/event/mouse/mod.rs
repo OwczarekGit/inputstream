@@ -6,7 +6,7 @@ use std::{
 #[cfg(target_os = "linux")]
 mod linux;
 
-use super::difference::Difference;
+use super::{difference::Difference, EventType};
 
 #[derive(Debug, Default, Clone, Copy, PartialEq, PartialOrd)]
 pub struct MouseEvent {
@@ -29,6 +29,12 @@ impl MouseEvent {
     pub fn button_state(&self, button: impl Into<MouseButton>) -> bool {
         let button = button.into() as u32;
         self.buttons & button > 0
+    }
+}
+
+impl From<MouseEvent> for EventType {
+    fn from(value: MouseEvent) -> Self {
+        Self::Mouse(value)
     }
 }
 

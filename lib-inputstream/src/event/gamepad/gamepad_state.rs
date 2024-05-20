@@ -3,7 +3,7 @@ use std::{
     str::{FromStr, Split},
 };
 
-use crate::event::difference::Difference;
+use crate::event::{difference::Difference, EventType};
 
 use super::gamepad_button::GamepadButton;
 
@@ -29,6 +29,12 @@ impl GamepadState {
         } else {
             self.buttons &= !bit;
         }
+    }
+}
+
+impl From<GamepadState> for EventType {
+    fn from(value: GamepadState) -> Self {
+        Self::Gamepad(value)
     }
 }
 
