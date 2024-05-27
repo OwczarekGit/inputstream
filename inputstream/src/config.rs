@@ -1,7 +1,7 @@
 use std::sync::OnceLock;
 
 use clap::Parser;
-use lib_inputstream::osu_key_args::OsuKey;
+use lib_inputstream::event::keyboard::named;
 
 pub fn config() -> &'static Config {
     static CONFIG: OnceLock<Config> = OnceLock::new();
@@ -19,9 +19,9 @@ pub struct Config {
 
     /// Set custom key 1 for osu!.
     #[arg(long, default_value = "z")]
-    pub osu_key1: OsuKey,
+    pub osu_key1: named::Key,
 
     /// Set custom key 2 for osu!.
     #[arg(long, default_value = "x")]
-    pub osu_key2: OsuKey,
+    pub osu_key2: named::Key,
 }

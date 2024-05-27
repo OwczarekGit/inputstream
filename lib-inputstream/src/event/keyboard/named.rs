@@ -1,3 +1,5 @@
+use std::str::FromStr;
+
 use super::{Group1Event, Group2Event, Group3Event, KeyboardEventGroup};
 
 #[derive(Debug, Clone, Copy)]
@@ -105,6 +107,14 @@ pub enum Key {
     Numpad9,
 }
 
+impl TryFrom<String> for Key {
+    type Error = String;
+
+    fn try_from(value: String) -> Result<Self, Self::Error> {
+        value.parse()
+    }
+}
+
 impl From<Key> for KeyboardEventGroup {
     fn from(value: Key) -> Self {
         match value {
@@ -206,6 +216,349 @@ impl From<Key> for KeyboardEventGroup {
             Key::Numpad7 => KeyboardEventGroup::G3(Group3Event::Numpad7),
             Key::Numpad8 => KeyboardEventGroup::G3(Group3Event::Numpad8),
             Key::Numpad9 => KeyboardEventGroup::G3(Group3Event::Numpad9),
+        }
+    }
+}
+
+impl FromStr for Key {
+    type Err = String;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let s = s.to_lowercase();
+        match s.as_str() {
+            // FN keys
+            "esc" | "escape" => Ok(Self::Esc),
+            "f1" => Ok(Self::F1),
+            "f2" => Ok(Self::F2),
+            "f3" => Ok(Self::F3),
+            "f4" => Ok(Self::F4),
+            "f5" => Ok(Self::F5),
+            "f6" => Ok(Self::F6),
+            "f7" => Ok(Self::F7),
+            "f8" => Ok(Self::F8),
+            "f9" => Ok(Self::F9),
+            "f10" => Ok(Self::F10),
+            "f11" => Ok(Self::F11),
+            "f12" => Ok(Self::F12),
+
+            // Number row
+            "~" | "`" => Ok(Self::Tilde),
+            "1" => Ok(Self::Num1),
+            "2" => Ok(Self::Num2),
+            "3" => Ok(Self::Num3),
+            "4" => Ok(Self::Num4),
+            "5" => Ok(Self::Num5),
+            "6" => Ok(Self::Num6),
+            "7" => Ok(Self::Num7),
+            "8" => Ok(Self::Num8),
+            "9" => Ok(Self::Num9),
+            "0" => Ok(Self::Num0),
+            "-" | "minus" | "dash" => Ok(Self::Minus),
+            "+" | "equal" | "=" => Ok(Self::Equal),
+            "backspace" => Ok(Self::Backspace),
+
+            // Row 1
+            "tab" => Ok(Self::Tab),
+            "q" => Ok(Self::Q),
+            "w" => Ok(Self::W),
+            "e" => Ok(Self::E),
+            "r" => Ok(Self::R),
+            "t" => Ok(Self::T),
+            "y" => Ok(Self::Y),
+            "u" => Ok(Self::U),
+            "i" => Ok(Self::I),
+            "o" => Ok(Self::O),
+            "p" => Ok(Self::P),
+            "[" => Ok(Self::LeftBrace),
+            "]" => Ok(Self::RightBrace),
+            "\\" | "|" => Ok(Self::Backslash),
+
+            // Row 2
+            "caps" => Ok(Self::CapsLock),
+            "a" => Ok(Self::A),
+            "s" => Ok(Self::S),
+            "d" => Ok(Self::D),
+            "f" => Ok(Self::F),
+            "g" => Ok(Self::G),
+            "h" => Ok(Self::H),
+            "j" => Ok(Self::J),
+            "k" => Ok(Self::K),
+            "l" => Ok(Self::L),
+            ";" | "semicolon" => Ok(Self::Semicolon),
+            "'" | "\"" => Ok(Self::Quote),
+            "enter" | "return" => Ok(Self::Enter),
+
+            // Row 3
+            "lshift" | "leftshift" | "shift" => Ok(Self::LeftShift),
+            "z" => Ok(Self::Z),
+            "x" => Ok(Self::X),
+            "c" => Ok(Self::C),
+            "v" => Ok(Self::V),
+            "b" => Ok(Self::B),
+            "n" => Ok(Self::N),
+            "m" => Ok(Self::M),
+            "," | "comma" => Ok(Self::Comma),
+            "." | "dot" => Ok(Self::Dot),
+            "/" | "slash" => Ok(Self::Slash),
+            "rshift" | "rightshift" => Ok(Self::RightShift),
+
+            // Row 4
+            "lctrl" | "leftctrl" | "leftcontrol" | "ctrl" => Ok(Self::LeftCtrl),
+            "super" | "mod" | "lwin" | "leftwin" | "win" => Ok(Self::LeftMeta),
+            "lalt" | "leftalt" | "alt" => Ok(Self::LeftAlt),
+            "space" => Ok(Self::Space),
+            "ralt" | "rightalt" | "altgr" => Ok(Self::RightAlt),
+            "context" => Ok(Self::ContextMenu),
+            "rctrl" | "rightctrl" | "rightcontrol" => Ok(Self::RightCtrl),
+
+            // Middle part
+            "print" => Ok(Self::Print),
+            "scroll" => Ok(Self::ScrollLock),
+            "pause" => Ok(Self::Pause),
+            "insert" | "ins" => Ok(Self::Insert),
+            "home" => Ok(Self::Home),
+            "pageup" | "pgup" => Ok(Self::PageUp),
+            "delete" | "del" => Ok(Self::Delete),
+            "end" => Ok(Self::End),
+            "pagedown" | "pgdown" => Ok(Self::PageDown),
+            "left" => Ok(Self::Left),
+            "right" => Ok(Self::Right),
+            "up" => Ok(Self::Up),
+            "down" => Ok(Self::Down),
+
+            // Numpad
+            "num0" => Ok(Self::Numpad0),
+            "num1" => Ok(Self::Numpad1),
+            "num2" => Ok(Self::Numpad2),
+            "num3" => Ok(Self::Numpad3),
+            "num4" => Ok(Self::Numpad4),
+            "num5" => Ok(Self::Numpad5),
+            "num6" => Ok(Self::Numpad6),
+            "num7" => Ok(Self::Numpad7),
+            "num8" => Ok(Self::Numpad8),
+            "num9" => Ok(Self::Numpad9),
+
+            _ => Err(s.to_owned()),
+        }
+    }
+}
+
+#[cfg(target_os = "linux")]
+impl TryFrom<Key> for evdev::Key {
+    type Error = String;
+
+    fn try_from(value: Key) -> Result<Self, Self::Error> {
+        match value {
+            Key::A => Ok(evdev::Key::KEY_A),
+            Key::B => Ok(evdev::Key::KEY_B),
+            Key::C => Ok(evdev::Key::KEY_C),
+            Key::D => Ok(evdev::Key::KEY_D),
+            Key::E => Ok(evdev::Key::KEY_E),
+            Key::F => Ok(evdev::Key::KEY_F),
+            Key::G => Ok(evdev::Key::KEY_G),
+            Key::H => Ok(evdev::Key::KEY_H),
+            Key::I => Ok(evdev::Key::KEY_I),
+            Key::J => Ok(evdev::Key::KEY_J),
+            Key::K => Ok(evdev::Key::KEY_K),
+            Key::L => Ok(evdev::Key::KEY_L),
+            Key::M => Ok(evdev::Key::KEY_M),
+            Key::N => Ok(evdev::Key::KEY_N),
+            Key::O => Ok(evdev::Key::KEY_O),
+            Key::P => Ok(evdev::Key::KEY_P),
+            Key::Q => Ok(evdev::Key::KEY_Q),
+            Key::R => Ok(evdev::Key::KEY_R),
+            Key::S => Ok(evdev::Key::KEY_S),
+            Key::T => Ok(evdev::Key::KEY_T),
+            Key::U => Ok(evdev::Key::KEY_U),
+            Key::V => Ok(evdev::Key::KEY_V),
+            Key::W => Ok(evdev::Key::KEY_W),
+            Key::X => Ok(evdev::Key::KEY_X),
+            Key::Y => Ok(evdev::Key::KEY_Y),
+            Key::Z => Ok(evdev::Key::KEY_Z),
+            Key::Backslash => Ok(evdev::Key::KEY_BACKSLASH),
+            Key::LeftBrace => Ok(evdev::Key::KEY_LEFTBRACE),
+            Key::RightBrace => Ok(evdev::Key::KEY_RIGHTBRACE),
+            Key::Print => Ok(evdev::Key::KEY_PRINT),
+            Key::ScrollLock => Ok(evdev::Key::KEY_SCROLLLOCK),
+            Key::Pause => Ok(evdev::Key::KEY_PAUSE),
+            Key::Num0 => Ok(evdev::Key::KEY_0),
+            Key::Num1 => Ok(evdev::Key::KEY_1),
+            Key::Num2 => Ok(evdev::Key::KEY_1),
+            Key::Num3 => Ok(evdev::Key::KEY_3),
+            Key::Num4 => Ok(evdev::Key::KEY_4),
+            Key::Num5 => Ok(evdev::Key::KEY_5),
+            Key::Num6 => Ok(evdev::Key::KEY_6),
+            Key::Num7 => Ok(evdev::Key::KEY_7),
+            Key::Num8 => Ok(evdev::Key::KEY_8),
+            Key::Num9 => Ok(evdev::Key::KEY_9),
+            Key::Minus => Ok(evdev::Key::KEY_MINUS),
+            Key::Equal => Ok(evdev::Key::KEY_EQUAL),
+            Key::Backspace => Ok(evdev::Key::KEY_BACKSPACE),
+            Key::Tilde => Ok(evdev::Key::KEY_GRAVE),
+            Key::Enter => Ok(evdev::Key::KEY_ENTER),
+            Key::Tab => Ok(evdev::Key::KEY_TAB),
+            Key::Esc => Ok(evdev::Key::KEY_ESC),
+            Key::CapsLock => Ok(evdev::Key::KEY_CAPSLOCK),
+            Key::LeftShift => Ok(evdev::Key::KEY_LEFTSHIFT),
+            Key::LeftCtrl => Ok(evdev::Key::KEY_LEFTCTRL),
+            Key::LeftAlt => Ok(evdev::Key::KEY_LEFTALT),
+            Key::LeftMeta => Ok(evdev::Key::KEY_LEFTMETA),
+            Key::Space => Ok(evdev::Key::KEY_SPACE),
+            Key::RightAlt => Ok(evdev::Key::KEY_RIGHTALT),
+            Key::ContextMenu => Ok(evdev::Key::KEY_CONTEXT_MENU),
+            Key::RightCtrl => Ok(evdev::Key::KEY_RIGHTCTRL),
+            Key::RightShift => Ok(evdev::Key::KEY_RIGHTSHIFT),
+            Key::Comma => Ok(evdev::Key::KEY_COMMA),
+            Key::Dot => Ok(evdev::Key::KEY_DOT),
+            Key::Slash => Ok(evdev::Key::KEY_SLASH),
+            Key::Semicolon => Ok(evdev::Key::KEY_SEMICOLON),
+            Key::Quote => Ok(evdev::Key::KEY_APOSTROPHE),
+            Key::F1 => Ok(evdev::Key::KEY_F1),
+            Key::F2 => Ok(evdev::Key::KEY_F2),
+            Key::F3 => Ok(evdev::Key::KEY_F3),
+            Key::F4 => Ok(evdev::Key::KEY_F4),
+            Key::F5 => Ok(evdev::Key::KEY_F5),
+            Key::F6 => Ok(evdev::Key::KEY_F6),
+            Key::F7 => Ok(evdev::Key::KEY_F7),
+            Key::F8 => Ok(evdev::Key::KEY_F8),
+            Key::F9 => Ok(evdev::Key::KEY_F9),
+            Key::F10 => Ok(evdev::Key::KEY_F10),
+            Key::F11 => Ok(evdev::Key::KEY_F11),
+            Key::F12 => Ok(evdev::Key::KEY_F12),
+            Key::Left => Ok(evdev::Key::KEY_LEFT),
+            Key::Right => Ok(evdev::Key::KEY_RIGHT),
+            Key::Up => Ok(evdev::Key::KEY_UP),
+            Key::Down => Ok(evdev::Key::KEY_DOWN),
+            Key::Insert => Ok(evdev::Key::KEY_INSERT),
+            Key::Delete => Ok(evdev::Key::KEY_DELETE),
+            Key::Home => Ok(evdev::Key::KEY_HOME),
+            Key::End => Ok(evdev::Key::KEY_END),
+            Key::PageUp => Ok(evdev::Key::KEY_PAGEUP),
+            Key::PageDown => Ok(evdev::Key::KEY_PAGEDOWN),
+            Key::Numpad0 => Ok(evdev::Key::KEY_NUMERIC_0),
+            Key::Numpad1 => Ok(evdev::Key::KEY_NUMERIC_1),
+            Key::Numpad2 => Ok(evdev::Key::KEY_NUMERIC_2),
+            Key::Numpad3 => Ok(evdev::Key::KEY_NUMERIC_3),
+            Key::Numpad4 => Ok(evdev::Key::KEY_NUMERIC_4),
+            Key::Numpad5 => Ok(evdev::Key::KEY_NUMERIC_5),
+            Key::Numpad6 => Ok(evdev::Key::KEY_NUMERIC_6),
+            Key::Numpad7 => Ok(evdev::Key::KEY_NUMERIC_7),
+            Key::Numpad8 => Ok(evdev::Key::KEY_NUMERIC_8),
+            Key::Numpad9 => Ok(evdev::Key::KEY_NUMERIC_9),
+        }
+    }
+}
+
+#[cfg(feature = "sdl2")]
+impl TryFrom<sdl2::keyboard::Keycode> for Key {
+    type Error = String;
+
+    fn try_from(value: sdl2::keyboard::Keycode) -> Result<Self, Self::Error> {
+        use sdl2::keyboard::Keycode;
+        match value {
+            // Group 1
+            Keycode::A => Ok(Self::A),
+            Keycode::B => Ok(Self::B),
+            Keycode::C => Ok(Self::C),
+            Keycode::D => Ok(Self::D),
+            Keycode::E => Ok(Self::E),
+            Keycode::F => Ok(Self::F),
+            Keycode::G => Ok(Self::G),
+            Keycode::H => Ok(Self::H),
+            Keycode::I => Ok(Self::I),
+            Keycode::J => Ok(Self::J),
+            Keycode::K => Ok(Self::K),
+            Keycode::L => Ok(Self::L),
+            Keycode::M => Ok(Self::M),
+            Keycode::N => Ok(Self::N),
+            Keycode::O => Ok(Self::O),
+            Keycode::P => Ok(Self::P),
+            Keycode::Q => Ok(Self::Q),
+            Keycode::R => Ok(Self::R),
+            Keycode::S => Ok(Self::S),
+            Keycode::T => Ok(Self::T),
+            Keycode::U => Ok(Self::U),
+            Keycode::V => Ok(Self::V),
+            Keycode::W => Ok(Self::W),
+            Keycode::X => Ok(Self::X),
+            Keycode::Y => Ok(Self::Y),
+            Keycode::Z => Ok(Self::Z),
+            Keycode::Backslash => Ok(Self::Backslash),
+            Keycode::LeftBracket => Ok(Self::LeftBrace),
+            Keycode::RightBracket => Ok(Self::RightBrace),
+            Keycode::PrintScreen => Ok(Self::Print),
+            Keycode::ScrollLock => Ok(Self::ScrollLock),
+            Keycode::Pause => Ok(Self::Pause),
+
+            // Group 2
+            Keycode::Num0 => Ok(Self::Num0),
+            Keycode::Num1 => Ok(Self::Num1),
+            Keycode::Num2 => Ok(Self::Num2),
+            Keycode::Num3 => Ok(Self::Num3),
+            Keycode::Num4 => Ok(Self::Num4),
+            Keycode::Num5 => Ok(Self::Num5),
+            Keycode::Num6 => Ok(Self::Num6),
+            Keycode::Num7 => Ok(Self::Num7),
+            Keycode::Num8 => Ok(Self::Num8),
+            Keycode::Num9 => Ok(Self::Num9),
+            Keycode::Minus => Ok(Self::Minus),
+            Keycode::Equals => Ok(Self::Equal),
+            Keycode::Backspace => Ok(Self::Backspace),
+            Keycode::Backquote => Ok(Self::Tilde),
+            Keycode::Return => Ok(Self::Enter),
+            Keycode::Tab => Ok(Self::Tab),
+            Keycode::Escape => Ok(Self::Esc),
+            Keycode::CapsLock => Ok(Self::CapsLock),
+            Keycode::LShift => Ok(Self::LeftShift),
+            Keycode::LCtrl => Ok(Self::LeftCtrl),
+            Keycode::LAlt => Ok(Self::LeftAlt),
+            Keycode::LGui => Ok(Self::LeftMeta),
+            Keycode::Space => Ok(Self::Space),
+            Keycode::RAlt => Ok(Self::RightAlt),
+            Keycode::Application => Ok(Self::ContextMenu),
+            Keycode::RCtrl => Ok(Self::RightCtrl),
+            Keycode::RShift => Ok(Self::RightShift),
+            Keycode::Comma => Ok(Self::Comma),
+            Keycode::Period => Ok(Self::Dot),
+            Keycode::Slash => Ok(Self::Slash),
+            Keycode::Semicolon => Ok(Self::Semicolon),
+            Keycode::Quote => Ok(Self::Quote),
+
+            // Group 3
+            Keycode::F1 => Ok(Self::F1),
+            Keycode::F2 => Ok(Self::F2),
+            Keycode::F3 => Ok(Self::F3),
+            Keycode::F4 => Ok(Self::F4),
+            Keycode::F5 => Ok(Self::F5),
+            Keycode::F6 => Ok(Self::F6),
+            Keycode::F7 => Ok(Self::F7),
+            Keycode::F8 => Ok(Self::F8),
+            Keycode::F9 => Ok(Self::F9),
+            Keycode::F10 => Ok(Self::F10),
+            Keycode::F11 => Ok(Self::F11),
+            Keycode::F12 => Ok(Self::F12),
+            Keycode::Left => Ok(Self::Left),
+            Keycode::Right => Ok(Self::Right),
+            Keycode::Up => Ok(Self::Up),
+            Keycode::Down => Ok(Self::Down),
+            Keycode::Insert => Ok(Self::Insert),
+            Keycode::Delete => Ok(Self::Delete),
+            Keycode::Home => Ok(Self::Home),
+            Keycode::End => Ok(Self::End),
+            Keycode::PageUp => Ok(Self::PageUp),
+            Keycode::PageDown => Ok(Self::PageDown),
+            Keycode::Kp0 => Ok(Self::Num0),
+            Keycode::Kp1 => Ok(Self::Num1),
+            Keycode::Kp2 => Ok(Self::Num2),
+            Keycode::Kp3 => Ok(Self::Num3),
+            Keycode::Kp4 => Ok(Self::Num4),
+            Keycode::Kp5 => Ok(Self::Num5),
+            Keycode::Kp6 => Ok(Self::Num6),
+            Keycode::Kp7 => Ok(Self::Num7),
+            Keycode::Kp8 => Ok(Self::Num8),
+            Keycode::Kp9 => Ok(Self::Num9),
+
+            other => Err(other.to_string()),
         }
     }
 }

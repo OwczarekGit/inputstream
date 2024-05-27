@@ -1,5 +1,5 @@
 use crate::Result;
-use evdev::{uinput::VirtualDeviceBuilder, AttributeSet, EventType, InputEvent, Key};
+use evdev::{uinput::VirtualDeviceBuilder, AttributeSet, EventType, InputEvent};
 use lib_inputstream::{consts::OSU_DEVICE_NAME, prelude::*};
 
 use crate::{
@@ -12,8 +12,8 @@ impl EventHandler<OsuState> for OsuEventHandler {
         let (k1, k2) = {
             let config = config().clone();
             (
-                Key::try_from(config.osu_key1).unwrap_or(Key::KEY_Z),
-                Key::try_from(config.osu_key2).unwrap_or(Key::KEY_X),
+                config.osu_key1.try_into().unwrap(),
+                config.osu_key2.try_into().unwrap(),
             )
         };
 
