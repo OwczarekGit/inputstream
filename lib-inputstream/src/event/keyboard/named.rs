@@ -1,4 +1,4 @@
-use std::str::FromStr;
+use std::{fmt::Display, str::FromStr};
 
 use super::{Group1Event, Group2Event, Group3Event, KeyboardEventGroup};
 
@@ -217,6 +217,12 @@ impl From<Key> for KeyboardEventGroup {
             Key::Numpad8 => KeyboardEventGroup::G3(Group3Event::Numpad8),
             Key::Numpad9 => KeyboardEventGroup::G3(Group3Event::Numpad9),
         }
+    }
+}
+
+impl Display for Key {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{self:?}")
     }
 }
 
@@ -558,6 +564,115 @@ impl TryFrom<sdl2::keyboard::Keycode> for Key {
             Keycode::Kp8 => Ok(Self::Num8),
             Keycode::Kp9 => Ok(Self::Num9),
 
+            other => Err(other.to_string()),
+        }
+    }
+}
+
+#[cfg(target_os = "windows")]
+impl TryFrom<Key> for i32 {
+    type Error = String;
+
+    fn try_from(value: Key) -> Result<Self, Self::Error> {
+        // TODO: Implement the rest.
+        use winapi::um::winuser::*;
+        match value {
+            Key::A => Ok(0x41),
+            Key::B => Ok(0x42),
+            Key::C => Ok(0x43),
+            Key::D => Ok(0x44),
+            Key::E => Ok(0x45),
+            Key::F => Ok(0x46),
+            Key::G => Ok(0x47),
+            Key::H => Ok(0x48),
+            Key::I => Ok(0x49),
+            Key::J => Ok(0x4a),
+            Key::K => Ok(0x4b),
+            Key::L => Ok(0x4c),
+            Key::M => Ok(0x4d),
+            Key::N => Ok(0x4e),
+            Key::O => Ok(0x4f),
+            Key::P => Ok(0x50),
+            Key::Q => Ok(0x51),
+            Key::R => Ok(0x52),
+            Key::S => Ok(0x53),
+            Key::T => Ok(0x54),
+            Key::U => Ok(0x55),
+            Key::V => Ok(0x56),
+            Key::W => Ok(0x57),
+            Key::X => Ok(0x58),
+            Key::Y => Ok(0x59),
+            Key::Z => Ok(0x5a),
+            Key::Backslash => Ok(VK_OEM_5),
+            Key::LeftBrace => Ok(VK_OEM_4),
+            Key::RightBrace => Ok(VK_OEM_6),
+            // Key::Print => Ok(),
+            // Key::ScrollLock => Ok(),
+            // Key::Pause => Ok(),
+            Key::Num0 => Ok(0x30),
+            Key::Num1 => Ok(0x31),
+            Key::Num2 => Ok(0x32),
+            Key::Num3 => Ok(0x33),
+            Key::Num4 => Ok(0x34),
+            Key::Num5 => Ok(0x35),
+            Key::Num6 => Ok(0x36),
+            Key::Num7 => Ok(0x37),
+            Key::Num8 => Ok(0x38),
+            Key::Num9 => Ok(0x39),
+            Key::Minus => Ok(VK_OEM_MINUS),
+            Key::Equal => Ok(VK_OEM_PLUS),
+            // Key::Backspace => Ok(),
+            // Key::Tilde => Ok(),
+            // Key::Enter => Ok(),
+            // Key::Tab => Ok(),
+            // Key::Esc => Ok(),
+            // Key::CapsLock => Ok(),
+            // Key::LeftShift => Ok(),
+            // Key::LeftCtrl => Ok(),
+            // Key::LeftAlt => Ok(),
+            // Key::LeftMeta => Ok(),
+            // Key::Space => Ok(),
+            // Key::RightAlt => Ok(),
+            // Key::ContextMenu => Ok(),
+            // Key::RightCtrl => Ok(),
+            // Key::RightShift => Ok(),
+            Key::Comma => Ok(VK_OEM_COMMA),
+            Key::Dot => Ok(VK_OEM_PERIOD),
+            Key::Slash => Ok(VK_OEM_2),
+            Key::Semicolon => Ok(VK_OEM_1),
+            Key::Quote => Ok(VK_OEM_7),
+            // Key::F1 => Ok(),
+            // Key::F2 => Ok(),
+            // Key::F3 => Ok(),
+            // Key::F4 => Ok(),
+            // Key::F5 => Ok(),
+            // Key::F6 => Ok(),
+            // Key::F7 => Ok(),
+            // Key::F8 => Ok(),
+            // Key::F9 => Ok(),
+            // Key::F10 => Ok(),
+            // Key::F11 => Ok(),
+            // Key::F12 => Ok(),
+            // Key::Left => Ok(),
+            // Key::Right => Ok(),
+            // Key::Up => Ok(),
+            // Key::Down => Ok(),
+            // Key::Insert => Ok(),
+            // Key::Delete => Ok(),
+            // Key::Home => Ok(),
+            // Key::End => Ok(),
+            // Key::PageUp => Ok(),
+            // Key::PageDown => Ok(),
+            // Key::Numpad0 => Ok(),
+            // Key::Numpad1 => Ok(),
+            // Key::Numpad2 => Ok(),
+            // Key::Numpad3 => Ok(),
+            // Key::Numpad4 => Ok(),
+            // Key::Numpad5 => Ok(),
+            // Key::Numpad6 => Ok(),
+            // Key::Numpad7 => Ok(),
+            // Key::Numpad8 => Ok(),
+            // Key::Numpad9 => Ok(),
             other => Err(other.to_string()),
         }
     }
