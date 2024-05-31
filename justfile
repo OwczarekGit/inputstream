@@ -1,5 +1,7 @@
 default:
 
+all: linux windows
+
 clean:
     cargo clean
 
