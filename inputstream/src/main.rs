@@ -6,7 +6,7 @@ use event_handlers::{
         EventHandler, GamepadEventHandler, KeyboardEventHandler, MouseEventHandler, OsuEventHandler,
     },
 };
-use server::Server;
+use lib_inputstream::server::TcpServer;
 
 mod config;
 mod error;
@@ -16,7 +16,7 @@ mod server;
 
 fn main() -> Result<()> {
     let config = config();
-    let mut server = Server::new(config.port)?;
+    let mut server = TcpServer::new(config.port)?;
 
     let (senders, osu_recv, keyboard_recv, mouse_recv, gamepad_recv) = create_channels();
 
@@ -25,7 +25,10 @@ fn main() -> Result<()> {
     KeyboardEventHandler.run_detached(keyboard_recv);
     GamepadEventHandler.run_detached(gamepad_recv);
 
-    server.start(senders)?;
+    server.listen(|conn| {
+        let senders = senders.clone();
+        std::thread::spawn(move || crate::server::listen(conn, senders));
+    })?;
 
     Ok(())
 }

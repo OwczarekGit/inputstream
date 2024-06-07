@@ -1,24 +1,55 @@
 use std::{
+    error::Error,
+    fmt::{Debug, Display},
     io::Write,
     net::{IpAddr, SocketAddr, TcpStream},
+    str::FromStr,
 };
 
-use crate::event::EventType;
+use crate::prelude::EventType;
 
-#[derive(Debug)]
-pub struct Client {
-    stream: TcpStream,
+pub trait MessageSerializer<M> {
+    fn serialize(message: M) -> String;
 }
 
-impl Client {
+impl<T, M> MessageSerializer<M> for T
+where
+    M: Debug + Default + Display + FromStr,
+{
+    fn serialize(message: M) -> String {
+        let message = message.to_string();
+        let len = message.len();
+        format!("{:05}{}", len, message)
+    }
+}
+
+pub trait Client {
+    type Error: Debug + Error;
+    type Message: Debug + Default + Display + FromStr;
+    fn send(&mut self, message: Self::Message) -> Result<(), Self::Error>;
+}
+
+#[derive(Debug)]
+pub struct TcpClient {
+    socket: TcpStream,
+}
+
+impl TcpClient {
     pub fn new(addr: impl Into<IpAddr>, port: impl Into<u16>) -> Result<Self, std::io::Error> {
         let socket_addr = SocketAddr::new(addr.into(), port.into());
         Ok(Self {
-            stream: TcpStream::connect(socket_addr)?,
+            socket: TcpStream::connect(socket_addr)?,
         })
     }
+}
 
-    pub fn send_event(&mut self, event: impl Into<EventType>) -> Result<usize, std::io::Error> {
-        self.stream.write(event.into().to_string().as_bytes())
+impl Client for TcpClient {
+    type Error = std::io::Error;
+
+    type Message = EventType;
+
+    fn send(&mut self, message: Self::Message) -> Result<(), Self::Error> {
+        let message = Self::serialize(message);
+        self.socket.write_all(message.as_bytes())
     }
 }

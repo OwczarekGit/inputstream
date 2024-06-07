@@ -4,15 +4,17 @@ mod config;
 use clap::Parser;
 use config::Config;
 use lib_inputstream::{
-    event::gamepad::absolute_axis::AbsoluteAxis, prelude::*, utils::sdl2_to_dualsense_triggers,
+    client::{Client, TcpClient},
+    event::gamepad::absolute_axis::AbsoluteAxis,
+    prelude::*,
+    utils::sdl2_to_dualsense_triggers,
 };
 
 use sdl2::{controller::Axis, event::Event, keyboard::Keycode, pixels::Color};
 
 pub fn main() {
     let config = Config::parse();
-
-    let mut client = Client::new(config.address, config.port);
+    let mut client = TcpClient::new(config.address, config.port);
 
     let ctx = sdl2::init().unwrap();
 
@@ -199,19 +201,19 @@ pub fn main() {
 
         if let Ok(client) = &mut client {
             if prev_keyboard_state != keyboard_state {
-                let _ = client.send_event(keyboard_state);
+                let _ = client.send(keyboard_state.into());
             }
 
             if prev_mouse_state != mouse_state && !config.disable_mouse {
-                let _ = client.send_event(mouse_state);
+                let _ = client.send(mouse_state.into());
             }
 
             if prev_osu_state != osu_state {
-                let _ = client.send_event(osu_state);
+                let _ = client.send(osu_state.into());
             }
 
             if prev_gamepad_state != gamepad_state && !config.disable_gamepad {
-                let _ = client.send_event(gamepad_state);
+                let _ = client.send(gamepad_state.into());
             }
         }
         thread::sleep(Duration::from_millis(config.rate));

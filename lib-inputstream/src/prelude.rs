@@ -1,4 +1,4 @@
-pub use crate::client::Client;
+pub use crate::client::TcpClient;
 pub use crate::event::difference::Difference;
 pub use crate::event::gamepad::{
     absolute_axis::AbsoluteAxis, gamepad_button::GamepadButton, gamepad_state::GamepadState,
