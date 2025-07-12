@@ -9,18 +9,22 @@ use io_core::{
 use sdl3::{event::Event, gamepad::Axis, pixels::Color};
 
 use crate::arguments::Arguments;
+use error::AppRes;
 
 mod arguments;
+mod error;
 
 const WINDOW_TITLE: &str = "IO-Remote Desktop Client";
 
-fn main() {
+fn main() -> AppRes<()> {
     let config = Arguments::parse();
 
     let addr = format!("{}:{}", config.address, config.port);
-    let mut client = TcpStream::connect(addr).unwrap();
+    let mut client = TcpStream::connect(addr)?;
 
-    let ctx = sdl3::init().unwrap();
+    let mouse_accell = config.mouse_accell;
+
+    let ctx = sdl3::init()?;
     let mouse_util = ctx.mouse();
     let gamepad_sub = ctx.gamepad();
 
@@ -32,13 +36,13 @@ fn main() {
             .collect::<Vec<_>>()
     });
 
-    let video = ctx.video().unwrap();
+    let video = ctx.video()?;
 
     let window = video
         .window(WINDOW_TITLE, 200, 200)
         .position_centered()
-        .build()
-        .unwrap();
+        .input_grabbed()
+        .build()?;
 
     let mut canvas = window.into_canvas();
 
@@ -49,7 +53,7 @@ fn main() {
     canvas.clear();
     canvas.present();
 
-    let mut ev_pump = ctx.event_pump().unwrap();
+    let mut ev_pump = ctx.event_pump()?;
 
     let mut mouse = Mouse::default();
     let mut new_mouse = Mouse::default();
@@ -77,8 +81,8 @@ fn main() {
                     new_keyboard.set_state(keycode, false);
                 }
                 Event::MouseMotion { xrel, yrel, .. } => {
-                    new_mouse.0 = xrel;
-                    new_mouse.1 = yrel;
+                    new_mouse.0 = xrel * mouse_accell;
+                    new_mouse.1 = yrel * mouse_accell;
                 }
                 Event::MouseButtonDown { mouse_btn, .. } => {
                     new_mouse.set_button(mouse_btn, true);
@@ -108,15 +112,15 @@ fn main() {
         }
 
         if !new_mouse.eq(&mouse) {
-            _ = client.write(&MessageEncoder::encode(new_mouse));
+            client.write_all(&MessageEncoder::encode(new_mouse))?;
         }
 
         if !new_keyboard.eq(&keyboard) {
-            _ = client.write(&MessageEncoder::encode(new_keyboard));
+            client.write_all(&MessageEncoder::encode(new_keyboard))?;
         }
 
         if !new_gamepad.eq(&gamepad) {
-            _ = client.write(&MessageEncoder::encode(new_gamepad));
+            client.write_all(&MessageEncoder::encode(new_gamepad))?;
         }
 
         mouse = new_mouse;
@@ -125,4 +129,6 @@ fn main() {
 
         thread::sleep(Duration::from_millis(4));
     }
+
+    Ok(())
 }
