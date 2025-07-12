@@ -1,5 +1,6 @@
 use std::{io::Write, net::TcpStream, thread, time::Duration};
 
+use clap::Parser;
 use io_core::{
     builtin::messages::{gamepad::Gamepad, keyboard::Keyboard, mouse::Mouse},
     dispatcher::message::MessageEncoder,
@@ -7,10 +8,16 @@ use io_core::{
 };
 use sdl3::{event::Event, gamepad::Axis, pixels::Color};
 
+use crate::arguments::Arguments;
+
+mod arguments;
+
 const WINDOW_TITLE: &str = "IO-Remote Desktop Client";
 
 fn main() {
-    let addr = "192.168.1.45:2137".to_string();
+    let config = Arguments::parse();
+
+    let addr = format!("{}:{}", config.address, config.port);
     let mut client = TcpStream::connect(addr).unwrap();
 
     let ctx = sdl3::init().unwrap();
