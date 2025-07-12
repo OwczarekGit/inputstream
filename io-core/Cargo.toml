@@ -1,0 +1,8 @@
+[package]
+name = "io-core"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+evdev = "0.13.1"
+sdl3 = "0.14.35"

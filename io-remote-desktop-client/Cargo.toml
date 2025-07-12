@@ -1,0 +1,8 @@
+[package]
+name = "io-remote-desktop-client"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+io-core = { path = "../io-core" }
+sdl3 = "0.14.35"

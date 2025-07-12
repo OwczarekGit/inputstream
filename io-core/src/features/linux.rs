@@ -1,0 +1,131 @@
+use evdev::KeyCode;
+
+use crate::builtin::messages::{
+    gamepad::gamepad_button::GamepadButton, keyboard::key::Key, mouse::button::Button,
+};
+
+impl From<Key> for KeyCode {
+    fn from(value: Key) -> Self {
+        match value {
+            Key::A => KeyCode::KEY_A,
+            Key::B => KeyCode::KEY_B,
+            Key::C => KeyCode::KEY_C,
+            Key::D => KeyCode::KEY_D,
+            Key::E => KeyCode::KEY_E,
+            Key::F => KeyCode::KEY_F,
+            Key::G => KeyCode::KEY_G,
+            Key::H => KeyCode::KEY_H,
+            Key::I => KeyCode::KEY_I,
+            Key::J => KeyCode::KEY_J,
+            Key::K => KeyCode::KEY_K,
+            Key::L => KeyCode::KEY_L,
+            Key::M => KeyCode::KEY_M,
+            Key::N => KeyCode::KEY_N,
+            Key::O => KeyCode::KEY_O,
+            Key::P => KeyCode::KEY_P,
+            Key::Q => KeyCode::KEY_Q,
+            Key::R => KeyCode::KEY_R,
+            Key::S => KeyCode::KEY_S,
+            Key::T => KeyCode::KEY_T,
+            Key::U => KeyCode::KEY_U,
+            Key::V => KeyCode::KEY_V,
+            Key::W => KeyCode::KEY_W,
+            Key::X => KeyCode::KEY_X,
+            Key::Y => KeyCode::KEY_Y,
+            Key::Z => KeyCode::KEY_Z,
+            Key::K0 => KeyCode::KEY_0,
+            Key::K1 => KeyCode::KEY_1,
+            Key::K2 => KeyCode::KEY_2,
+            Key::K3 => KeyCode::KEY_3,
+            Key::K4 => KeyCode::KEY_4,
+            Key::K5 => KeyCode::KEY_5,
+            Key::K6 => KeyCode::KEY_6,
+            Key::K7 => KeyCode::KEY_7,
+            Key::K8 => KeyCode::KEY_8,
+            Key::K9 => KeyCode::KEY_9,
+            Key::Tilde => KeyCode::KEY_GRAVE,
+            Key::Minus => KeyCode::KEY_MINUS,
+            Key::Equals => KeyCode::KEY_EQUAL,
+            Key::Backspace => KeyCode::KEY_BACKSPACE,
+            Key::Escape => KeyCode::KEY_ESC,
+            Key::Tab => KeyCode::KEY_TAB,
+            Key::CapsLock => KeyCode::KEY_CAPSLOCK,
+            Key::LeftShift => KeyCode::KEY_LEFTSHIFT,
+            Key::LeftCtrl => KeyCode::KEY_LEFTCTRL,
+            Key::LeftSuper => KeyCode::KEY_LEFTMETA,
+            Key::LeftAlt => KeyCode::KEY_LEFTALT,
+            Key::Space => KeyCode::KEY_SPACE,
+            Key::RightAlt => KeyCode::KEY_RIGHTALT,
+            Key::ContextMenu => KeyCode::KEY_CONTEXT_MENU,
+            Key::RightSuper => KeyCode::KEY_RIGHTMETA,
+            Key::RightCtrl => KeyCode::KEY_RIGHTCTRL,
+            Key::RightShift => KeyCode::KEY_RIGHTSHIFT,
+            Key::Enter => KeyCode::KEY_ENTER,
+            Key::Up => KeyCode::KEY_UP,
+            Key::Left => KeyCode::KEY_LEFT,
+            Key::Right => KeyCode::KEY_RIGHT,
+            Key::Down => KeyCode::KEY_DOWN,
+            Key::F1 => KeyCode::KEY_F1,
+            Key::F2 => KeyCode::KEY_F2,
+            Key::F3 => KeyCode::KEY_F3,
+            Key::F4 => KeyCode::KEY_F4,
+            Key::F5 => KeyCode::KEY_F5,
+            Key::F6 => KeyCode::KEY_F6,
+            Key::F7 => KeyCode::KEY_F7,
+            Key::F8 => KeyCode::KEY_F8,
+            Key::F9 => KeyCode::KEY_F9,
+            Key::F10 => KeyCode::KEY_F10,
+            Key::F11 => KeyCode::KEY_F11,
+            Key::F12 => KeyCode::KEY_F12,
+            Key::Insert => KeyCode::KEY_INSERT,
+            Key::Delete => KeyCode::KEY_DELETE,
+            Key::Home => KeyCode::KEY_HOME,
+            Key::End => KeyCode::KEY_END,
+            Key::PageUp => KeyCode::KEY_PAGEUP,
+            Key::PageDown => KeyCode::KEY_PAGEDOWN,
+            Key::PrintScreen => KeyCode::KEY_PRINT,
+            Key::ScrollLock => KeyCode::KEY_SCROLLLOCK,
+            Key::Pause => KeyCode::KEY_PAUSE,
+            Key::BracketLeft => KeyCode::KEY_LEFTBRACE,
+            Key::BracketRight => KeyCode::KEY_RIGHTBRACE,
+            Key::Semicolon => KeyCode::KEY_SEMICOLON,
+            Key::Quote => KeyCode::KEY_APOSTROPHE,
+            Key::Backslash => KeyCode::KEY_BACKSLASH,
+            Key::Dot => KeyCode::KEY_DOT,
+            Key::Comma => KeyCode::KEY_COMMA,
+            Key::Slash => KeyCode::KEY_SLASH,
+        }
+    }
+}
+
+impl From<Button> for KeyCode {
+    fn from(value: Button) -> Self {
+        match value {
+            Button::Left => KeyCode::BTN_LEFT,
+            Button::Right => KeyCode::BTN_RIGHT,
+            Button::Middle => KeyCode::BTN_MIDDLE,
+            Button::Mouse4 => KeyCode::BTN_BACK,
+            Button::Mouse5 => KeyCode::BTN_FORWARD,
+        }
+    }
+}
+
+impl From<GamepadButton> for KeyCode {
+    fn from(value: GamepadButton) -> Self {
+        match value {
+            GamepadButton::Triangle => KeyCode::BTN_NORTH,
+            GamepadButton::Circle => KeyCode::BTN_EAST,
+            GamepadButton::X => KeyCode::BTN_SOUTH,
+            GamepadButton::Square => KeyCode::BTN_WEST,
+            GamepadButton::LeftBumper => KeyCode::BTN_TL,
+            GamepadButton::RightBumper => KeyCode::BTN_TR,
+            GamepadButton::Share => KeyCode::BTN_SELECT,
+            GamepadButton::Options => KeyCode::BTN_START,
+            GamepadButton::LeftStick => KeyCode::BTN_THUMBL,
+            GamepadButton::RightStick => KeyCode::BTN_THUMBR,
+            GamepadButton::Logo => KeyCode::BTN_MODE,
+            GamepadButton::Mute => KeyCode::BTN_EXTRA,
+            other => unreachable!("Unexpected: {:?}", other),
+        }
+    }
+}
