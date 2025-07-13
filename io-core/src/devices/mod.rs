@@ -12,8 +12,8 @@ pub fn create_channel<T: Message>() -> (Sender<T>, Receiver<T>) {
 
 pub const KEYBOARD_DEVICE_NAME: &str = "IORemote Virtual Keyboard";
 pub const MOUSE_DEVICE_NAME: &str = "IORemote Virtual Mouse";
-pub const DUALSENSE_GAMEPAD_DEVICE_NAME: &str =
-    "Sony Interactive Entertainment DualSense Wireless Controller";
+pub const DUALSENSE_GAMEPAD_DEVICE_NAME: &str = "DualSense Wireless Controller";
+pub const DUALSENSE_MOTION_DEVICE_NAME: &str = "DualSense Wireless Controller Motion Sensors";
 
 pub trait VirtualDevice<D, M: Message>: Sized + Send + 'static {
     fn with_receiver(receiver: Receiver<M>) -> Self;

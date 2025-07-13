@@ -7,12 +7,12 @@ pub mod error;
 pub use error::{AppRes, Error};
 
 use io_core::{
-    builtin::messages::{gamepad::Gamepad, keyboard::Keyboard, mouse::Mouse},
+    builtin::messages::{gamepad::Gamepad, keyboard::Keyboard, motion::Motion, mouse::Mouse},
     devices::{
         VirtualDevice, create_channel,
         linux::{
             gamepad::dualsense::DualsenseGamepadDevice, keyboard::KeyboardDevice,
-            mouse::MouseDevice,
+            motion::dualsense::DualsenseMotionDevice, mouse::MouseDevice,
         },
     },
     dispatcher::{Dispatcher, listener::Listener},
@@ -24,14 +24,17 @@ fn main() -> AppRes<()> {
     let keyboard_channel = create_channel::<Keyboard>();
     let mouse_channel = create_channel::<Mouse>();
     let gamepad_channel = create_channel::<Gamepad>();
+    let motion_channel = create_channel::<Motion>();
 
     dispatcher.register_listener(Box::new(MouseLogger(mouse_channel.0)))?;
     dispatcher.register_listener(Box::new(KeyboardLogger(keyboard_channel.0)))?;
     dispatcher.register_listener(Box::new(GamepadLogger(gamepad_channel.0)))?;
+    dispatcher.register_listener(Box::new(MotionLogger(motion_channel.0)))?;
 
     KeyboardDevice::with_receiver(keyboard_channel.1).start_threaded()?;
     MouseDevice::with_receiver(mouse_channel.1).start_threaded()?;
     DualsenseGamepadDevice::with_receiver(gamepad_channel.1).start_threaded()?;
+    DualsenseMotionDevice::with_receiver(motion_channel.1).start_threaded()?;
 
     let addr = "0.0.0.0:2137".to_string();
     let listener = TcpListener::bind(addr)?;
@@ -88,6 +91,14 @@ struct GamepadLogger(Sender<Gamepad>);
 
 impl Listener<Gamepad> for GamepadLogger {
     fn dispatch(&self, msg: Gamepad) {
+        _ = self.0.send(msg);
+    }
+}
+
+struct MotionLogger(Sender<Motion>);
+
+impl Listener<Motion> for MotionLogger {
+    fn dispatch(&self, msg: Motion) {
         _ = self.0.send(msg);
     }
 }
