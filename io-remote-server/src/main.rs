@@ -26,10 +26,10 @@ fn main() -> AppRes<()> {
     let gamepad_channel = create_channel::<Gamepad>();
     let motion_channel = create_channel::<Motion>();
 
-    dispatcher.register_listener(Box::new(MouseLogger(mouse_channel.0)))?;
-    dispatcher.register_listener(Box::new(KeyboardLogger(keyboard_channel.0)))?;
-    dispatcher.register_listener(Box::new(GamepadLogger(gamepad_channel.0)))?;
-    dispatcher.register_listener(Box::new(MotionLogger(motion_channel.0)))?;
+    dispatcher.register_listener(Box::new(MouseDispatcher(mouse_channel.0)))?;
+    dispatcher.register_listener(Box::new(KeyboardDispatcher(keyboard_channel.0)))?;
+    dispatcher.register_listener(Box::new(GamepadDispatcher(gamepad_channel.0)))?;
+    dispatcher.register_listener(Box::new(MotionDispatcher(motion_channel.0)))?;
 
     KeyboardDevice::with_receiver(keyboard_channel.1).start_threaded()?;
     MouseDevice::with_receiver(mouse_channel.1).start_threaded()?;
@@ -71,33 +71,33 @@ fn handle(mut stream: TcpStream, dispatcher: Arc<Dispatcher>) -> AppRes<()> {
     }
 }
 
-pub struct MouseLogger(Sender<Mouse>);
+pub struct MouseDispatcher(Sender<Mouse>);
 
-impl Listener<Mouse> for MouseLogger {
+impl Listener<Mouse> for MouseDispatcher {
     fn dispatch(&self, msg: Mouse) {
         _ = self.0.send(msg);
     }
 }
 
-struct KeyboardLogger(Sender<Keyboard>);
+struct KeyboardDispatcher(Sender<Keyboard>);
 
-impl Listener<Keyboard> for KeyboardLogger {
+impl Listener<Keyboard> for KeyboardDispatcher {
     fn dispatch(&self, msg: Keyboard) {
         _ = self.0.send(msg);
     }
 }
 
-struct GamepadLogger(Sender<Gamepad>);
+struct GamepadDispatcher(Sender<Gamepad>);
 
-impl Listener<Gamepad> for GamepadLogger {
+impl Listener<Gamepad> for GamepadDispatcher {
     fn dispatch(&self, msg: Gamepad) {
         _ = self.0.send(msg);
     }
 }
 
-struct MotionLogger(Sender<Motion>);
+struct MotionDispatcher(Sender<Motion>);
 
-impl Listener<Motion> for MotionLogger {
+impl Listener<Motion> for MotionDispatcher {
     fn dispatch(&self, msg: Motion) {
         _ = self.0.send(msg);
     }
