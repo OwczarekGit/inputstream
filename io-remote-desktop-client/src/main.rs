@@ -2,7 +2,7 @@ use std::{io::Write, net::TcpStream, thread, time::Duration};
 
 use clap::Parser;
 use io_core::{
-    builtin::messages::{gamepad::Gamepad, keyboard::Keyboard, mouse::Mouse},
+    builtin::messages::{gamepad::Gamepad, keyboard::Keyboard, motion::Motion, mouse::Mouse},
     dispatcher::message::MessageEncoder,
     features::sdl3::{map_sdl3_axis_to_gamepad, map_sdl3_trigger_to_gamepad},
 };
@@ -64,6 +64,9 @@ fn main() -> AppRes<()> {
     let mut gamepad = Gamepad::default();
     let mut new_gamepad = Gamepad::default();
 
+    let mut motion = Motion::default();
+    let new_motion = Motion::default();
+
     'running: loop {
         for ev in ev_pump.poll_iter() {
             match ev {
@@ -123,9 +126,14 @@ fn main() -> AppRes<()> {
             client.write_all(&MessageEncoder::encode(new_gamepad))?;
         }
 
+        if !new_motion.eq(&motion) {
+            client.write_all(&MessageEncoder::encode(new_motion))?;
+        }
+
         mouse = new_mouse;
         keyboard = new_keyboard;
         gamepad = new_gamepad;
+        motion = new_motion;
 
         thread::sleep(Duration::from_millis(4));
     }

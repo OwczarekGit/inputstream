@@ -1,17 +1,17 @@
 use crate::{
     IORemoteResult,
-    builtin::messages::MOTION_MESSAGE_KIND,
+    builtin::messages::{MOTION_MESSAGE_KIND, difference::Difference},
     dispatcher::message::{Message, MessageKind},
 };
 
 #[derive(Debug, Default, Clone, Copy, PartialEq, PartialOrd)]
 pub struct Motion {
-    x: i16,
-    y: i16,
-    z: i16,
-    ax: i32,
-    ay: i32,
-    az: i32,
+    pub x: i16,
+    pub y: i16,
+    pub z: i16,
+    pub ax: i32,
+    pub ay: i32,
+    pub az: i32,
 }
 
 impl Message for Motion {
@@ -46,6 +46,28 @@ impl Message for Motion {
             ay,
             az,
         })
+    }
+}
+
+impl Difference for Motion {
+    type Diff = (
+        Option<i16>,
+        Option<i16>,
+        Option<i16>,
+        Option<i32>,
+        Option<i32>,
+        Option<i32>,
+    );
+
+    fn get_diff(&self, other: &Self) -> Self::Diff {
+        (
+            (!self.x.eq(&other.x)).then_some(self.x),
+            (!self.y.eq(&other.y)).then_some(self.y),
+            (!self.z.eq(&other.z)).then_some(self.z),
+            (!self.ax.eq(&other.ax)).then_some(self.ax),
+            (!self.ax.eq(&other.ay)).then_some(self.ay),
+            (!self.ax.eq(&other.az)).then_some(self.az),
+        )
     }
 }
 
