@@ -4,8 +4,8 @@ use crate::{
     devices::{DUALSENSE_MOTION_DEVICE_NAME, VirtualDevice},
 };
 use evdev::{
-    AbsInfo, AbsoluteAxisCode, AttributeSet, BusType, EventType, InputEvent, InputId, PropType,
-    UinputAbsSetup, uinput::VirtualDevice as EvdevVirtualDevice,
+    AbsInfo, AbsoluteAxisCode, AttributeSet, BusType, EventType, InputEvent, InputId, MiscCode,
+    PropType, UinputAbsSetup, uinput::VirtualDevice as EvdevVirtualDevice,
 };
 use std::sync::mpsc::Receiver;
 
@@ -28,8 +28,14 @@ impl VirtualDevice<EvdevVirtualDevice, Motion> for DualsenseMotionDevice {
 
         Ok(EvdevVirtualDevice::builder()?
             .name(DUALSENSE_MOTION_DEVICE_NAME)
-            .input_id(InputId::new(BusType::BUS_USB, VENDOR, PRODUCT, VERSION))
+            .input_id(InputId::new(
+                BusType::BUS_BLUETOOTH,
+                VENDOR,
+                PRODUCT,
+                VERSION,
+            ))
             .with_properties(&get_prop())?
+            .with_msc(&get_msc())?
             .with_absolute_axis(&get_axis_pos(AbsoluteAxisCode::ABS_X))?
             .with_absolute_axis(&get_axis_pos(AbsoluteAxisCode::ABS_Y))?
             .with_absolute_axis(&get_axis_pos(AbsoluteAxisCode::ABS_Z))?
@@ -71,6 +77,14 @@ impl VirtualDevice<EvdevVirtualDevice, Motion> for DualsenseMotionDevice {
         device.emit(&evs)?;
         Ok(())
     }
+}
+
+fn get_msc() -> AttributeSet<MiscCode> {
+    let mut props = AttributeSet::new();
+
+    props.insert(MiscCode::MSC_TIMESTAMP);
+
+    props
 }
 
 fn get_prop() -> AttributeSet<PropType> {
