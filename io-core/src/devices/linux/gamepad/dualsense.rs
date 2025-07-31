@@ -128,7 +128,9 @@ impl VirtualDevice<EvdevVirtualDevice, Gamepad> for DualsenseGamepadDevice {
             }
         }
 
-        device.emit(&evs)?;
+        if evs.len() > 0 {
+            device.emit(&evs)?;
+        }
         Ok(())
     }
 }

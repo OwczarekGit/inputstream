@@ -57,8 +57,9 @@ impl VirtualDevice<EvdevVirtualDevice, Mouse> for MouseDevice {
         push_rel_ev(RelativeAxisCode::REL_Y.0, dy);
         push_rel_ev(RelativeAxisCode::REL_WHEEL.0, dw);
 
-        device.emit(&evs)?;
-
+        if evs.len() > 0 {
+            device.emit(&evs)?;
+        }
         Ok(())
     }
 }
