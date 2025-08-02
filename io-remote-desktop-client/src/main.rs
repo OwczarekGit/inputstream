@@ -21,6 +21,8 @@ fn main() -> AppRes<()> {
 
     let addr = format!("{}:{}", config.address, config.port);
     let mut client = TcpStream::connect(addr)?;
+    client.set_nonblocking(true)?;
+    client.set_nodelay(true)?;
 
     let mouse_accell = config.mouse_accell;
 
