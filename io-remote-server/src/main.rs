@@ -22,7 +22,7 @@ use io_core::{
 type OnDisconnect = Arc<dyn Fn() + Send + Sync>;
 
 fn main() -> AppRes<()> {
-    let dispatcher = Arc::new(Dispatcher::default());
+    let dispatcher = Dispatcher::default();
 
     let keyboard_channel = create_channel::<Keyboard>();
     let mouse_channel = create_channel::<Mouse>();
@@ -68,7 +68,7 @@ fn main() -> AppRes<()> {
 
 fn handle(
     mut stream: TcpStream,
-    dispatcher: Arc<Dispatcher>,
+    dispatcher: Dispatcher,
     on_disconnect: OnDisconnect,
 ) -> AppRes<()> {
     let _ = || -> AppRes<()> {

@@ -48,7 +48,7 @@ pub struct DispatcherState {
     dispatchers: HashMap<MessageKind, (TypeId, DispatchFn)>,
 }
 
-#[derive(Default)]
+#[derive(Default, Clone)]
 pub struct Dispatcher {
     state: Arc<RwLock<DispatcherState>>,
 }
