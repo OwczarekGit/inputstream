@@ -4,7 +4,11 @@ pub mod message;
 use crate::{Error, IORemoteResult};
 use listener::{AnyListener, AnyListenerImpl, Listener};
 use message::{Message, MessageKind};
-use std::{any::TypeId, collections::HashMap, sync::RwLock};
+use std::{
+    any::TypeId,
+    collections::HashMap,
+    sync::{Arc, RwLock},
+};
 
 #[derive(Debug, Clone)]
 pub struct DecodedMessage {
@@ -39,9 +43,14 @@ impl MessageDecoder {
 type DispatchFn = fn(&[u8], &Box<dyn AnyListener>) -> IORemoteResult<()>;
 
 #[derive(Default)]
+pub struct DispatcherState {
+    listeners: HashMap<TypeId, Box<dyn AnyListener>>,
+    dispatchers: HashMap<MessageKind, (TypeId, DispatchFn)>,
+}
+
+#[derive(Default)]
 pub struct Dispatcher {
-    listeners: RwLock<HashMap<TypeId, Box<dyn AnyListener>>>,
-    dispatchers: RwLock<HashMap<MessageKind, (TypeId, DispatchFn)>>,
+    state: Arc<RwLock<DispatcherState>>,
 }
 
 impl Dispatcher {
@@ -51,13 +60,13 @@ impl Dispatcher {
     ) -> IORemoteResult<()> {
         self.register_message::<M>()?;
 
-        let mut map = self.listeners.write()?;
+        let mut state = self.state.write()?;
 
-        if map.contains_key(&TypeId::of::<M>()) {
+        if state.listeners.contains_key(&TypeId::of::<M>()) {
             return Err(Error::MessageHandlerAlreadyRegistered(TypeId::of::<M>()));
         }
 
-        map.insert(
+        state.listeners.insert(
             TypeId::of::<M>(),
             Box::new(AnyListenerImpl { inner: listener }),
         );
@@ -68,15 +77,13 @@ impl Dispatcher {
     pub fn dispatch(&self, msg: &[u8]) -> IORemoteResult<()> {
         let DecodedMessage { kind, payload } = MessageDecoder::decode(msg)?;
 
-        let dispatchers = self.dispatchers.read()?;
+        let state = self.state.read()?;
 
-        let Some((type_id, dispatch_fn)) = dispatchers.get(&kind) else {
+        let Some((type_id, dispatch_fn)) = state.dispatchers.get(&kind) else {
             return Err(Error::MissingDispatcherForMessageKind(kind));
         };
 
-        let map = self.listeners.read().unwrap();
-
-        let Some(listener) = map.get(type_id) else {
+        let Some(listener) = state.listeners.get(type_id) else {
             return Err(Error::MissingListenerForMessageKind(kind));
         };
 
@@ -99,8 +106,10 @@ impl Dispatcher {
         }
 
         let kind = M::KIND;
-        let mut dispatchers = self.dispatchers.write()?;
-        dispatchers.insert(kind, (TypeId::of::<M>(), dispatch_fn::<M>));
+        let mut state = self.state.write()?;
+        state
+            .dispatchers
+            .insert(kind, (TypeId::of::<M>(), dispatch_fn::<M>));
 
         Ok(())
     }
