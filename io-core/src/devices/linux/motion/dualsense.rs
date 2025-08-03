@@ -74,7 +74,7 @@ impl VirtualDevice<EvdevVirtualDevice, Motion> for DualsenseMotionDevice {
         send_motion_acc(&mut evs, ay, AbsoluteAxisCode::ABS_RY.0);
         send_motion_acc(&mut evs, az, AbsoluteAxisCode::ABS_RZ.0);
 
-        if evs.len() > 0 {
+        if !evs.is_empty() {
             device.emit(&evs)?;
         }
         Ok(())

@@ -44,7 +44,7 @@ impl VirtualDevice<EvdevVirtualDevice, Keyboard> for KeyboardDevice {
             ));
         }
 
-        if evs.len() > 0 {
+        if !evs.is_empty() {
             device.emit(&evs)?;
         }
 
