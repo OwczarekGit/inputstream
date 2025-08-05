@@ -12,16 +12,13 @@ pub trait Message: Default + Clone + 'static {
 pub struct MessageEncoder;
 
 impl MessageEncoder {
-    pub fn encode<M: Message>(msg: M) -> Vec<u8> {
+    pub fn encode<M: Message>(msg: M, buffer: &mut Vec<u8>) {
         let kind = M::KIND;
         let payload = msg.serialize();
         let payload_len = payload.len() as u32;
 
-        let mut out = Vec::with_capacity(6 + payload.len());
-        out.extend(kind.to_be_bytes());
-        out.extend(payload_len.to_be_bytes());
-        out.extend(payload);
-
-        out
+        buffer.extend(kind.to_be_bytes());
+        buffer.extend(payload_len.to_be_bytes());
+        buffer.extend(payload);
     }
 }

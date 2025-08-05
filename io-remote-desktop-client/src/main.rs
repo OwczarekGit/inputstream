@@ -69,7 +69,17 @@ fn main() -> AppRes<()> {
     let mut motion = Motion::default();
     let new_motion = Motion::default();
 
+    let mut mouse_buffer = Vec::with_capacity(8);
+    let mut keyboard_buffer = Vec::with_capacity(16);
+    let mut gamepad_buffer = Vec::with_capacity(16);
+    let mut motion_buffer = Vec::with_capacity(16);
+
     'running: loop {
+        mouse_buffer.clear();
+        keyboard_buffer.clear();
+        gamepad_buffer.clear();
+        motion_buffer.clear();
+
         for ev in ev_pump.poll_iter() {
             match ev {
                 Event::Quit { .. } => break 'running,
@@ -117,19 +127,23 @@ fn main() -> AppRes<()> {
         }
 
         if !new_mouse.eq(&mouse) {
-            client.write_all(&MessageEncoder::encode(new_mouse))?;
+            MessageEncoder::encode(new_mouse, &mut mouse_buffer);
+            client.write_all(&mouse_buffer)?;
         }
 
         if !new_keyboard.eq(&keyboard) {
-            client.write_all(&MessageEncoder::encode(new_keyboard))?;
+            MessageEncoder::encode(new_keyboard, &mut keyboard_buffer);
+            client.write_all(&keyboard_buffer)?;
         }
 
         if !new_gamepad.eq(&gamepad) {
-            client.write_all(&MessageEncoder::encode(new_gamepad))?;
+            MessageEncoder::encode(new_gamepad, &mut gamepad_buffer);
+            client.write_all(&gamepad_buffer)?;
         }
 
         if !new_motion.eq(&motion) {
-            client.write_all(&MessageEncoder::encode(new_motion))?;
+            MessageEncoder::encode(new_motion, &mut motion_buffer);
+            client.write_all(&motion_buffer)?;
         }
 
         mouse = new_mouse;

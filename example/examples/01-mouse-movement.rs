@@ -11,11 +11,16 @@ fn main() {
     const RANGE: f32 = 10f32;
     const STEP: f32 = 0.05;
 
+    let mut buffer = vec![];
+
     loop {
+        buffer.clear();
         mouse.0 = delta.cos() * RANGE;
         mouse.1 = delta.sin() * RANGE;
 
-        conn.write(&MessageEncoder::encode(mouse)).unwrap();
+        MessageEncoder::encode(mouse, &mut buffer);
+
+        conn.write(&buffer).unwrap();
 
         delta = delta + STEP;
         sleep(Duration::from_millis(4));
