@@ -74,6 +74,8 @@ fn main() -> AppRes<()> {
     let mut gamepad_buffer = Vec::with_capacity(16);
     let mut motion_buffer = Vec::with_capacity(16);
 
+    let mut encoder = MessageEncoder::new();
+
     'running: loop {
         mouse_buffer.clear();
         keyboard_buffer.clear();
@@ -127,22 +129,22 @@ fn main() -> AppRes<()> {
         }
 
         if !new_mouse.eq(&mouse) {
-            MessageEncoder::encode(new_mouse, &mut mouse_buffer);
+            encoder.encode(new_mouse, &mut mouse_buffer);
             client.write_all(&mouse_buffer)?;
         }
 
         if !new_keyboard.eq(&keyboard) {
-            MessageEncoder::encode(new_keyboard, &mut keyboard_buffer);
+            encoder.encode(new_keyboard, &mut keyboard_buffer);
             client.write_all(&keyboard_buffer)?;
         }
 
         if !new_gamepad.eq(&gamepad) {
-            MessageEncoder::encode(new_gamepad, &mut gamepad_buffer);
+            encoder.encode(new_gamepad, &mut gamepad_buffer);
             client.write_all(&gamepad_buffer)?;
         }
 
         if !new_motion.eq(&motion) {
-            MessageEncoder::encode(new_motion, &mut motion_buffer);
+            encoder.encode(new_motion, &mut motion_buffer);
             client.write_all(&motion_buffer)?;
         }
 

@@ -124,7 +124,8 @@ mod tests {
     #[test]
     fn encoded_message_is_decoded_correctly() {
         let mut buffer = vec![];
-        MessageEncoder::encode(Mouse(11.0, -34.2, 22.2, 123), &mut buffer);
+        let mut enc = MessageEncoder::new();
+        enc.encode(Mouse(11.0, -34.2, 22.2, 123), &mut buffer);
         let dec = MessageDecoder::decode(&buffer).unwrap();
         let decoded = Mouse::deserialize(&dec.payload).unwrap();
         assert_eq!(decoded.0, 11.0);

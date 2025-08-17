@@ -17,17 +17,13 @@ pub struct Motion {
 impl Message for Motion {
     const KIND: MessageKind = MOTION_MESSAGE_KIND;
 
-    fn serialize(&self) -> Vec<u8> {
-        let mut data = Vec::with_capacity(18);
-
-        data.extend(self.x.to_be_bytes());
-        data.extend(self.y.to_be_bytes());
-        data.extend(self.z.to_be_bytes());
-        data.extend(self.ax.to_be_bytes());
-        data.extend(self.ay.to_be_bytes());
-        data.extend(self.az.to_be_bytes());
-
-        data
+    fn serialize(&self, buf: &mut Vec<u8>) {
+        buf.extend(self.x.to_be_bytes());
+        buf.extend(self.y.to_be_bytes());
+        buf.extend(self.z.to_be_bytes());
+        buf.extend(self.ax.to_be_bytes());
+        buf.extend(self.ay.to_be_bytes());
+        buf.extend(self.az.to_be_bytes());
     }
 
     fn deserialize(data: &[u8]) -> IORemoteResult<Self> {
@@ -91,8 +87,9 @@ mod tests {
                     ay: $ay,
                     az: $az,
                 };
-                let serialized = mt.serialize();
-                let deserialized = Motion::deserialize(&serialized).unwrap();
+                let mut buff = vec![];
+                mt.serialize(&mut buff);
+                let deserialized = Motion::deserialize(&buff).unwrap();
 
                 assert_eq!(deserialized.x, $x);
                 assert_eq!(deserialized.y, $y);

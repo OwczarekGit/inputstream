@@ -41,8 +41,7 @@ impl Gamepad {
 impl Message for Gamepad {
     const KIND: MessageKind = GAMEPAD_MESSAGE_KIND;
 
-    fn serialize(&self) -> Vec<u8> {
-        let mut buf = Vec::with_capacity(10);
+    fn serialize(&self, buf: &mut Vec<u8>) {
         buf.extend(self.xl.to_be_bytes());
         buf.extend(self.yl.to_be_bytes());
         buf.extend(self.xr.to_be_bytes());
@@ -50,7 +49,6 @@ impl Message for Gamepad {
         buf.extend(self.zl.to_be_bytes());
         buf.extend(self.zr.to_be_bytes());
         buf.extend_from_slice(&self.buttons.to_be_bytes());
-        buf
     }
 
     fn deserialize(data: &[u8]) -> IORemoteResult<Self> {
@@ -130,8 +128,9 @@ mod tests {
                     zr: $zr,
                     buttons: $btn,
                 };
-                let serialized = gp.serialize();
-                let deserialized = Gamepad::deserialize(&serialized).unwrap();
+                let mut buff = vec![];
+                gp.serialize(&mut buff);
+                let deserialized = Gamepad::deserialize(&buff).unwrap();
 
                 assert_eq!(deserialized.xl, $xl);
                 assert_eq!(deserialized.yl, $yl);

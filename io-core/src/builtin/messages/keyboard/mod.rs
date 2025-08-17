@@ -51,14 +51,11 @@ impl Keyboard {
 impl Message for Keyboard {
     const KIND: MessageKind = KEYBOARD_MESSAGE_KIND;
 
-    fn serialize(&self) -> Vec<u8> {
-        let mut buf = Vec::<u8>::with_capacity(16);
+    fn serialize(&self, buf: &mut Vec<u8>) {
         buf.extend_from_slice(&self.0.to_be_bytes());
         buf.extend_from_slice(&self.1.to_be_bytes());
         buf.extend_from_slice(&self.2.to_be_bytes());
         buf.extend_from_slice(&self.3.to_be_bytes());
-
-        buf
     }
 
     fn deserialize(data: &[u8]) -> IORemoteResult<Self> {
@@ -98,8 +95,9 @@ mod tests {
             #[test]
             fn $case() {
                 let kbd = Keyboard($b1, $b2, $b3, $b4);
-                let serialized = kbd.serialize();
-                let deserialized = Keyboard::deserialize(&serialized).unwrap();
+                let mut buff = vec![];
+                kbd.serialize(&mut buff);
+                let deserialized = Keyboard::deserialize(&buff).unwrap();
 
                 assert_eq!(deserialized.0, $b1);
                 assert_eq!(deserialized.1, $b2);

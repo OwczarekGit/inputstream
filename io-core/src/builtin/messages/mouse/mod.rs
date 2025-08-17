@@ -31,13 +31,11 @@ impl Mouse {
 impl Message for Mouse {
     const KIND: MessageKind = MOUSE_MESSAGE_KIND;
 
-    fn serialize(&self) -> Vec<u8> {
-        let mut buf = Vec::with_capacity(13);
+    fn serialize(&self, buf: &mut Vec<u8>) {
         buf.extend(&self.0.to_bits().to_be_bytes());
         buf.extend(&self.1.to_bits().to_be_bytes());
         buf.extend(&self.2.to_bits().to_be_bytes());
         buf.push(self.3);
-        buf
     }
 
     fn deserialize(data: &[u8]) -> IORemoteResult<Self> {
@@ -86,8 +84,9 @@ mod tests {
             #[test]
             fn $case() {
                 let m = Mouse($x, $y, $w, $b);
-                let serialized = m.serialize();
-                let deserialized = Mouse::deserialize(&serialized).unwrap();
+                let mut buff = vec![];
+                m.serialize(&mut buff);
+                let deserialized = Mouse::deserialize(&buff).unwrap();
 
                 assert_eq!(deserialized.0, $x);
                 assert_eq!(deserialized.1, $y);

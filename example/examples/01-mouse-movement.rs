@@ -12,14 +12,14 @@ fn main() {
     const STEP: f32 = 0.05;
 
     let mut buffer = vec![];
+    let mut encoder = MessageEncoder::new();
 
     loop {
         buffer.clear();
         mouse.0 = delta.cos() * RANGE;
         mouse.1 = delta.sin() * RANGE;
 
-        MessageEncoder::encode(mouse, &mut buffer);
-
+        encoder.encode(mouse, &mut buffer);
         conn.write(&buffer).unwrap();
 
         delta = delta + STEP;
