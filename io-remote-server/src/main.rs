@@ -54,7 +54,6 @@ fn main() -> AppRes<()> {
 
     let addr = "0.0.0.0:2137".to_string();
     let listener = TcpListener::bind(addr)?;
-    listener.set_nonblocking(true)?;
 
     for conn in listener.incoming().flatten() {
         let dispatcher = dispatcher.clone();
